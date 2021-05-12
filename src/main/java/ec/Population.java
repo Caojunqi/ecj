@@ -120,7 +120,7 @@ public class Population implements Cloneable, Setup
         int size = state.parameters.getInt(p,null,1);
         if (size<=0) // uh oh
             state.output.fatal("Population size must be >0.\n",base.push(P_SIZE));
-        subpops = new ArrayList<Subpopulation>(subpops.size());
+        subpops = new ArrayList<Subpopulation>(size);
 
         // Set up the subpopulations
         for (int x=0;x<size;x++)
