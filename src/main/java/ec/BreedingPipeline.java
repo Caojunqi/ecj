@@ -203,6 +203,7 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
                         p,d);
                 
                 // else the source is the same source as before
+                // 注，如果使用了same，那么配置文件中后续为该source定制的参数就都没用了，因为不会走setup的逻辑，所有的参数都是用的前一个source的
                 sources[x] = sources[x-1];
                 }
             else if (s != null && s.equals(V_STUB))
