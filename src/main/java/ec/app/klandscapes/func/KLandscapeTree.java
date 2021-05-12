@@ -6,23 +6,25 @@
 
 package ec.app.klandscapes.func;
 
-import ec.*;
-import ec.app.klandscapes.*;
-import ec.gp.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.Problem;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
 
-public abstract class KLandscapeTree extends GPNode
-    {
+public abstract class KLandscapeTree extends GPNode {
     public abstract char value();
 
-    public String toString() { return "" + value(); }
+    public String toString() {
+        return "" + value();
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        }
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
     }
+}

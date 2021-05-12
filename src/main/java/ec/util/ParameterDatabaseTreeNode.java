@@ -7,40 +7,37 @@
 
 /*
  * Created on Apr 5, 2005 8:24:19 PM
- * 
+ *
  * By: spaus
  */
 package ec.util;
 
-import java.util.Arrays;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Vector;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 
 /**
  * @author spaus
  */
 class ParameterDatabaseTreeNode
-    extends DefaultMutableTreeNode
-    implements Comparable {
+        extends DefaultMutableTreeNode
+        implements Comparable {
 
     /**
-     * 
+     *
      */
     public ParameterDatabaseTreeNode() {
         super();
-        }
+    }
 
     /**
      * @param userObject
      */
     public ParameterDatabaseTreeNode(Object userObject) {
         super(userObject);
-        }
+    }
 
     /**
      * @param userObject
@@ -48,8 +45,8 @@ class ParameterDatabaseTreeNode
      */
     public ParameterDatabaseTreeNode(Object userObject, boolean allowsChildren) {
         super(userObject, allowsChildren);
-        }
-    
+    }
+
     /**
      * @param index
      * @param visibleLeaves
@@ -58,25 +55,25 @@ class ParameterDatabaseTreeNode
     public Object getChildAt(int index, boolean visibleLeaves) {
         if (children == null) {
             throw new ArrayIndexOutOfBoundsException("node has no children");
-            }
+        }
 
         if (!visibleLeaves) {
             int nonLeafIndex = -1;
             Enumeration e = children.elements();
             while (e.hasMoreElements()) {
-                TreeNode n = (TreeNode)e.nextElement();
+                TreeNode n = (TreeNode) e.nextElement();
                 if (!n.isLeaf()) {
                     if (++nonLeafIndex == index)
                         return n;
-                    }
                 }
-            
-            throw new ArrayIndexOutOfBoundsException("index = "+index+", children = "+getChildCount(visibleLeaves));
             }
-        
-        return super.getChildAt(index);
+
+            throw new ArrayIndexOutOfBoundsException("index = " + index + ", children = " + getChildCount(visibleLeaves));
         }
-    
+
+        return super.getChildAt(index);
+    }
+
     /**
      * @param visibleLeaves
      * @return
@@ -86,30 +83,30 @@ class ParameterDatabaseTreeNode
             int nonLeafCount = 0;
             Enumeration e = children.elements();
             while (e.hasMoreElements()) {
-                TreeNode n = (TreeNode)e.nextElement();
+                TreeNode n = (TreeNode) e.nextElement();
                 if (!n.isLeaf()) ++nonLeafCount;
-                }
-            
-            return nonLeafCount;
             }
-        
-        return super.getChildCount();
+
+            return nonLeafCount;
         }
-    
+
+        return super.getChildCount();
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(Object o) {
-        ParameterDatabaseTreeNode n = (ParameterDatabaseTreeNode)o;
+        ParameterDatabaseTreeNode n = (ParameterDatabaseTreeNode) o;
 
-        return ((Comparable)userObject).compareTo(n.userObject);
-        }
-    
+        return ((Comparable) userObject).compareTo(n.userObject);
+    }
+
     /**
      * @param comp
      */
     public void sort(Comparator comp) {
-        if (children == null) 
+        if (children == null)
             return;
         //                by Ermo. get rid of asList, if sorting is the purpose, no need to convert this.       
         //        Object[] childArr = children.toArray();
@@ -117,13 +114,13 @@ class ParameterDatabaseTreeNode
         //        children = new Vector(Arrays.asList(childArr));
         // Do we have Collections.sort in 1.5?  1.6?  Sean
         Collections.sort(children, comp);
-        
-        
+
+
         Enumeration e = children.elements();
         while (e.hasMoreElements()) {
-            ParameterDatabaseTreeNode n = 
-                (ParameterDatabaseTreeNode)e.nextElement();
+            ParameterDatabaseTreeNode n =
+                    (ParameterDatabaseTreeNode) e.nextElement();
             n.sort(comp);
-            }
         }
     }
+}

@@ -6,11 +6,12 @@
 
 
 package ec.util;
-import java.util.*;
 
-/* 
+import java.util.Properties;
+
+/*
  * Version.java
- * 
+ *
  * Created: Wed Aug 11 19:44:46 1999
  * By: Sean Luke
  */
@@ -20,11 +21,10 @@ import java.util.*;
  * evolutionary computation system.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Version
-    {
+public class Version {
     public static final String name = "ECJ";
     public static final String version = "27";
     public static final String copyright = "2019";
@@ -43,34 +43,33 @@ public class Version
     public static final String date = "July 1, 2017";
     public static final String minimumJavaVersion = "1.5";
 
-    public static final String message()
-        {
+    public static final String message() {
         Properties p = System.getProperties();
         String javaVersion = p.getProperty("java.version");
         String javaVM = p.getProperty("java.vm.name");
         String javaVMVersion = p.getProperty("java.vm.version");
-        if (javaVM!=null) javaVersion = javaVersion + " / " + javaVM;
-        if (javaVM!=null && javaVMVersion!=null) javaVersion = javaVersion + "-" + javaVMVersion;
-        
-    
-        return 
-            "\n| " + name + 
-            "\n| An evolutionary computation system (version " + version + ")" +
-            //"\n| Copyright " + copyright + */ " By " + author +
-            "\n| By " + author + 
-            "\n| Contributors: " + contributors +
-            "\n|               " + contributors2 +
-            "\n|               " + contributors3 +
-            "\n|               " + contributors4 +
-            "\n|               " + contributors5 +
-            "\n|               " + contributors6 +
-	    "\n|               " + contributors7 +
-            "\n| URL: " + authorURL +
-            "\n| Mail: " + authorEmail0 + "@" + authorEmail1 +
-            "\n|       " + authorEmail2 + 
-            "\n| Date: " + date +
-            "\n| Current Java: " + javaVersion +
-            "\n| Required Minimum Java: " + minimumJavaVersion +
-            "\n\n";
-        }
+        if (javaVM != null) javaVersion = javaVersion + " / " + javaVM;
+        if (javaVM != null && javaVMVersion != null) javaVersion = javaVersion + "-" + javaVMVersion;
+
+
+        return
+                "\n| " + name +
+                        "\n| An evolutionary computation system (version " + version + ")" +
+                        //"\n| Copyright " + copyright + */ " By " + author +
+                        "\n| By " + author +
+                        "\n| Contributors: " + contributors +
+                        "\n|               " + contributors2 +
+                        "\n|               " + contributors3 +
+                        "\n|               " + contributors4 +
+                        "\n|               " + contributors5 +
+                        "\n|               " + contributors6 +
+                        "\n|               " + contributors7 +
+                        "\n| URL: " + authorURL +
+                        "\n| Mail: " + authorEmail0 + "@" + authorEmail1 +
+                        "\n|       " + authorEmail2 +
+                        "\n| Date: " + date +
+                        "\n| Current Java: " + javaVersion +
+                        "\n| Required Minimum Java: " + minimumJavaVersion +
+                        "\n\n";
     }
+}

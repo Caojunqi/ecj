@@ -1,10 +1,12 @@
 package ec.eda.dovs;
 
-import java.util.ArrayList;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Population;
+import ec.simple.SimpleInitializer;
+import ec.vector.IntegerVectorIndividual;
 
-import ec.*;
-import ec.simple.*;
-import ec.vector.*;
+import java.util.ArrayList;
 
 /**
  * DOVSInitializer is a SimpleInitializer which ensures that the subpopulations
@@ -13,8 +15,7 @@ import ec.vector.*;
  *
  * @author Ermo Wei and David Freelan
  */
-public class DOVSInitializer extends SimpleInitializer
-    {
+public class DOVSInitializer extends SimpleInitializer {
     private static final long serialVersionUID = 1;
 
     /**
@@ -23,18 +24,15 @@ public class DOVSInitializer extends SimpleInitializer
      * this start point to construct a hyperbox contains promising solutions,
      * and sample from this region, the number of sample is equal to parameter
      * "pop.subpop.X.size" in parameter files.
-     * 
+     * <p>
      * However, due to redundant samples, we the final individuals size may be
      * smaller than what have been specified in pop.subpop.X.size.
      */
-    public Population initialPopulation(final EvolutionState state, int thread)
-        {
+    public Population initialPopulation(final EvolutionState state, int thread) {
         Population p = super.initialPopulation(state, thread);
         // make sure the each subpop only have one individual
-        for (int i = 0; i < p.subpops.size(); i++)
-            {
-            if (p.subpops.get(i).species instanceof DOVSSpecies)
-                {
+        for (int i = 0; i < p.subpops.size(); i++) {
+            if (p.subpops.get(i).species instanceof DOVSSpecies) {
                 DOVSSpecies species = (DOVSSpecies) p.subpops.get(i).species;
 
                 if (p.subpops.get(i).individuals.size() != 1)
@@ -49,12 +47,11 @@ public class DOVSInitializer extends SimpleInitializer
                 IntegerVectorIndividual ind = (IntegerVectorIndividual) species.visited.get(species.optimalIndex);
                 // For the visited solution, record its coordinate
                 // positions in the multimap
-                for (int j = 0; j < species.genomeSize; ++j)
-                    {
+                for (int j = 0; j < species.genomeSize; ++j) {
                     // The individual is the content. The key is its
                     // coordinate position
                     species.corners.get(j).insert(ind.genome[j], ind);
-                    }
+                }
 
                 // update MPA
                 species.updateMostPromisingArea(state);
@@ -69,10 +66,10 @@ public class DOVSInitializer extends SimpleInitializer
                 // update the individuals
                 p.subpops.get(i).individuals = uniqueCandidates;
 
-                }
-
             }
-        return p;
-        }
 
+        }
+        return p;
     }
+
+}

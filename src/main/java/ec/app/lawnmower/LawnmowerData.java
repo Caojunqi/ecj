@@ -6,30 +6,29 @@
 
 
 package ec.app.lawnmower;
-import ec.gp.*;
 
-/* 
+import ec.gp.GPData;
+
+/*
  * LawnmowerData.java
- * 
+ *
  * Created: Wed Nov  3 18:32:13 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class LawnmowerData extends GPData
-    {
+public class LawnmowerData extends GPData {
     // return value
     public int x;
     public int y;
 
-    public void copyTo(final GPData gpd) 
-        {
-        LawnmowerData d = (LawnmowerData)gpd;
+    public void copyTo(final GPData gpd) {
+        LawnmowerData d = (LawnmowerData) gpd;
         d.x = x;
         d.y = y;
-        }
     }
+}

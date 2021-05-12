@@ -1,24 +1,21 @@
 package ec.app.bbob;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import ec.*;
-import ec.gp.koza.HalfBuilder;
 import ec.simple.SimpleFitness;
 import ec.simple.SimpleProblemForm;
 import ec.util.MersenneTwisterFast;
 import ec.util.Parameter;
+import ec.util.ParameterDatabase;
 import ec.util.QuickSort;
 import ec.vector.DoubleVectorIndividual;
-import ec.util.ParameterDatabase;
-import ec.util.MersenneTwisterFast;
 
-/* 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+/*
  * BBOBenchmarks.java
- * 
+ *
  * Created: Fri Apr 2 09:00:00 2010
  * By: Faisal Abidi
  */
@@ -27,7 +24,7 @@ import ec.util.MersenneTwisterFast;
  * The Black Box Optimization workshop (BBOB) has an annual competition for doing real-valued parameter optimization.
  * The examples shown here are more or less faithful reproductions of the BBOB 2010 C code, only using Mersenne Twister
  * instead of BBOB's random number generator.  Unfortunately, the original BBOB code has various magic numbers, unexplained
- * variables, and unfortunate algorithmic decisions.  We've reproduced them exactly rather than attempt to convert to a 
+ * variables, and unfortunate algorithmic decisions.  We've reproduced them exactly rather than attempt to convert to a
  * standard ECJ template, and simply apologize beforehand.
  *
  * <p>
@@ -52,8 +49,7 @@ import ec.util.MersenneTwisterFast;
  * </font></td>
  * <td valign=top>(whether to reevaluate noisy problems)
  * </table>
- * 
- * 
+ *
  * @author Faisal Abidi
  * @version 1.0
  */
@@ -159,7 +155,7 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm {
         state.parameters = params;
         state.output = Evolve.buildOutput();
         state.output.setThrowsErrors(true);
-        state.random = new MersenneTwisterFast[] { new MersenneTwisterFast() };
+        state.random = new MersenneTwisterFast[]{new MersenneTwisterFast()};
 
         BBOBenchmarks instance = new BBOBenchmarks();
         instance.setup(state, BASE);
@@ -167,35 +163,35 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm {
         int whichLog = state.output.numLogs() - 1;
         File f = new File("bbob.csv");
         try {
-           whichLog = state.output.addLog(f, false);
+            whichLog = state.output.addLog(f, false);
         } catch (IOException io) {
             state.output.fatal("An IOException occurred while trying to create bbob.csv");
         }
 
         double granularity = Double.parseDouble(args[1]);
         ArrayList<Double> possibleVals = new ArrayList<Double>();
-        for(double i =-10;i<10;i+=granularity){
+        for (double i = -10; i < 10; i += granularity) {
             possibleVals.add(i);
         }
         int valsLength = possibleVals.size();
         ArrayList<Double[]> XYPair = new ArrayList<Double[]>();
-        for(int i=0;i<valsLength;i++){
-            for(int j=0;j<valsLength;j++){
-                Double[] temp = new Double[]{possibleVals.get(i),possibleVals.get(j)};
+        for (int i = 0; i < valsLength; i++) {
+            for (int j = 0; j < valsLength; j++) {
+                Double[] temp = new Double[]{possibleVals.get(i), possibleVals.get(j)};
                 XYPair.add(temp);
             }
         }
         int pairNumber = XYPair.size();
         DoubleVectorIndividual[] inds = new DoubleVectorIndividual[pairNumber];
-        for(int i=0;i<pairNumber;i++){
+        for (int i = 0; i < pairNumber; i++) {
             Double[] pair = XYPair.get(i);
             inds[i] = new DoubleVectorIndividual();
-            inds[i].setGenome(new double[]{pair[0],pair[1]});
+            inds[i].setGenome(new double[]{pair[0], pair[1]});
             inds[i].fitness = new SimpleFitness();
-            instance.evaluate(state,inds[i],0,0);
-            state.output.println(pair[0]+", "+pair[1] +", "+inds[i].fitness.fitnessToStringForHumans().split(" ")[1],whichLog);
+            instance.evaluate(state, inds[i], 0, 0);
+            state.output.println(pair[0] + ", " + pair[1] + ", " + inds[i].fitness.fitnessToStringForHumans().split(" ")[1], whichLog);
         }
-    }                                                                                                                                                            
+    }
 
     public void setup(final EvolutionState state, final Parameter base) {
         super.setup(state, base);
@@ -225,11 +221,11 @@ public class BBOBenchmarks extends Problem implements SimpleProblemForm {
         // common Initialization
         double compF = computeFopt(state.random[0]);
         fOpt = zeroIsBest ? 0.0 : compF;
-        if(!state.parameters.exists(base.push(P_XOPT),null)){
+        if (!state.parameters.exists(base.push(P_XOPT), null)) {
             xOpt = new double[genomeSize];
             computeXopt(xOpt, state.random[0]);
-        }else{
-            xOpt = state.parameters.getDoublesWithMax(base.push(P_XOPT),null,-5,5,genomeSize);
+        } else {
+            xOpt = state.parameters.getDoublesWithMax(base.push(P_XOPT), null, -5, 5, genomeSize);
         }
         rotation = new double[genomeSize][genomeSize];
         rot2 = new double[genomeSize][genomeSize];

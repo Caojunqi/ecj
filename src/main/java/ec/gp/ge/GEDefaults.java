@@ -6,8 +6,9 @@
 
 
 package ec.gp.ge;
+
+import ec.DefaultsForm;
 import ec.util.Parameter;
-import ec.*;
 
 /*
  * GEDefaults.java
@@ -25,13 +26,13 @@ import ec.*;
  * @version 1.0
  */
 
-public final class GEDefaults implements DefaultsForm
-    {
+public final class GEDefaults implements DefaultsForm {
     public static final String P_GE = "ge";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_GE);
-        }
     }
+}

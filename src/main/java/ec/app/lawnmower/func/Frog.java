@@ -6,26 +6,32 @@
 
 
 package ec.app.lawnmower.func;
-import ec.*;
-import ec.app.lawnmower.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.lawnmower.Lawnmower;
+import ec.app.lawnmower.LawnmowerData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Frog.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Frog extends GPNode
-    {
-    public String toString() { return "frog"; }
+public class Frog extends GPNode {
+    public String toString() {
+        return "frog";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,20 +46,21 @@ public class Frog extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 1; }
+    public int expectedChildren() {
+        return 1;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        Lawnmower p = (Lawnmower)problem;
-        LawnmowerData d = (LawnmowerData)input;
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        Lawnmower p = (Lawnmower) problem;
+        LawnmowerData d = (LawnmowerData) input;
 
-        children[0].eval(state,thread,input,stack,individual,problem);
-        
+        children[0].eval(state, thread, input, stack, individual, problem);
+
         // we follow the Koza-II example, not the lil-gp example.
         // that is, we "assume" that in our orientation the X axis
         // is moving out away from us, and the Y axis is moving
@@ -61,8 +68,7 @@ public class Frog extends GPNode
         // axis is moving out away from us, and the X axis is moving out
         // to the right.
 
-        switch (p.orientation)
-            {
+        switch (p.orientation) {
             case Lawnmower.O_UP:
                 // counter-clockwise rotation
                 p.posx -= d.y;
@@ -86,25 +92,24 @@ public class Frog extends GPNode
             default:  // whoa!
                 state.output.fatal("Whoa, somehow I got a bad orientation! (" + p.orientation + ")");
                 break;
-            }
+        }
 
         // shift back into the lawn frame.
         // because Java's % on negative numbers preserves the
         // minus sign, we have to mod twice with an addition.
         // C has to do this too.
-        p.posx = ((p.posx % p.maxx) + p.maxx ) % p.maxx ; 
-        p.posy = ((p.posy % p.maxy) + p.maxy ) % p.maxy ;
+        p.posx = ((p.posx % p.maxx) + p.maxx) % p.maxx;
+        p.posy = ((p.posy % p.maxy) + p.maxy) % p.maxy;
 
         p.moves++;
-        if (p.map[p.posx][p.posy]==Lawnmower.UNMOWED)
-            {
+        if (p.map[p.posx][p.posy] == Lawnmower.UNMOWED) {
             p.sum++;
             p.map[p.posx][p.posy] = p.moves;
-            }
+        }
 
         // return [x,y] -- to do this, simply don't modify input
-        }
     }
+}
 
 
 

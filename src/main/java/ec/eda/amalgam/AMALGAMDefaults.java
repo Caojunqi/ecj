@@ -7,16 +7,16 @@
 
 package ec.eda.amalgam;
 
-import ec.util.*;
-import ec.*;
+import ec.DefaultsForm;
+import ec.util.Parameter;
 
-public final class AMALGAMDefaults implements DefaultsForm
-    {
+public final class AMALGAMDefaults implements DefaultsForm {
     public static final String P_AMALGAM = "amalgam";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_AMALGAM);
-        }    
     }
+}

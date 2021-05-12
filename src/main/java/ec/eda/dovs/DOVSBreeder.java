@@ -6,26 +6,24 @@
 
 package ec.eda.dovs;
 
-import java.util.ArrayList;
-
 import ec.*;
-import ec.util.*;
+import ec.util.Parameter;
+
+import java.util.ArrayList;
 
 /**
  * DOVSBreeder is a Breeder which overrides the breedPopulation method to first
  * construct hyperbox around current best individual and replace the population
  * with new individuals sampled from this hyperbox. All the heavy lifting is
  * done in DOVSSpecies and its descendant, not here.
- * 
+ *
  * @author Ermo Wei and David Freelan
  */
 
-public class DOVSBreeder extends Breeder
-    {
-    public void setup(final EvolutionState state, final Parameter base)
-        {
+public class DOVSBreeder extends Breeder {
+    public void setup(final EvolutionState state, final Parameter base) {
         // nothing to setup
-        }
+    }
 
     /**
      * This method have three major part, first identify the best indiviudal,
@@ -34,15 +32,13 @@ public class DOVSBreeder extends Breeder
      * take the none redundant samples and return it.
      */
 
-    public Population breedPopulation(final EvolutionState state)
-        {
+    public Population breedPopulation(final EvolutionState state) {
         Population pop = state.population;
-        for (int i = 0; i < pop.subpops.size(); i++)
-            {
+        for (int i = 0; i < pop.subpops.size(); i++) {
             Subpopulation subpop = pop.subpops.get(i);
             if (!(subpop.species instanceof DOVSSpecies)) // uh oh
                 state.output.fatal("To use DOVSBreeder, subpopulation " + i
-                    + " must contain a DOVSSpecies.  But it contains a " + subpop.species);
+                        + " must contain a DOVSSpecies.  But it contains a " + subpop.species);
 
             DOVSSpecies species = (DOVSSpecies) (subpop.species);
 
@@ -71,7 +67,7 @@ public class DOVSBreeder extends Breeder
 
             // update the individuals
             subpop.individuals = Sk;
-            }
-        return pop;
         }
+        return pop;
     }
+}

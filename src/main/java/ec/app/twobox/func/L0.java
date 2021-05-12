@@ -6,26 +6,32 @@
 
 
 package ec.app.twobox.func;
-import ec.*;
-import ec.app.twobox.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.twobox.TwoBox;
+import ec.app.twobox.TwoBoxData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * L0.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class L0 extends GPNode
-    {
-    public String toString() { return "l0"; }
+public class L0 extends GPNode {
+    public String toString() {
+        return "l0";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,20 +46,21 @@ public class L0 extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        TwoBoxData rd = ((TwoBoxData)(input));
-        TwoBox tb = ((TwoBox)problem);
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        TwoBoxData rd = ((TwoBoxData) (input));
+        TwoBox tb = ((TwoBox) problem);
         rd.x = tb.inputsl0[tb.currentIndex];
-        }
     }
+}
 
 
 

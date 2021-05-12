@@ -6,11 +6,8 @@
 
 
 package ec.app.regression.func;
-import ec.*;
-import ec.app.regression.*;
-import ec.gp.*;
-import ec.util.*;
-import java.io.*;
+
+import ec.EvolutionState;
 
 
 /* 
@@ -26,22 +23,21 @@ import java.io.*;
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class KornsERC extends RegERC
-    {
-    public String name() { return "KornsERC"; }
-
-    public void resetNode(final EvolutionState state, final int thread)
-        { 
-        do
-            {
-            value = Double.longBitsToDouble(state.random[thread].nextLong()); 
-            }
-        while (Double.isNaN(value) || Double.isInfinite(value));
-        }
+public class KornsERC extends RegERC {
+    public String name() {
+        return "KornsERC";
     }
+
+    public void resetNode(final EvolutionState state, final int thread) {
+        do {
+            value = Double.longBitsToDouble(state.random[thread].nextLong());
+        }
+        while (Double.isNaN(value) || Double.isInfinite(value));
+    }
+}
 
 
 

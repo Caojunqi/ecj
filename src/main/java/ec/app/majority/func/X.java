@@ -5,46 +5,50 @@
 */
 
 package ec.app.majority.func;
-import ec.*;
-import ec.app.majority.*;
-import ec.gp.*;
-import ec.util.*;
 
-public class X extends GPNode
-    {
-    public String toString() { return "x"; }
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.majority.MajorityData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
 
-    public int expectedChildren() { return 0; }
-    
+public class X extends GPNode {
+    public String toString() {
+        return "x";
+    }
+
+    public int expectedChildren() {
+        return 0;
+    }
+
     public static long X0 = 0;
     public static long X1 = 0;
-    static
-        {
-        for(int i = 0 ; i < 64; i++)
-            {
+
+    static {
+        for (int i = 0; i < 64; i++) {
             long val = (i >> 3) & 0x1;  // middle element
             X0 = X0 | (val << i);
-            }
-                
-        for(int i = 64 ; i < 128; i++)
-            {
-            long val = (i >> 3) & 0x1;  // middle element
-            X1 = X1 | (val << (i - 64));
-            }
         }
 
+        for (int i = 64; i < 128; i++) {
+            long val = (i >> 3) & 0x1;  // middle element
+            X1 = X1 | (val << (i - 64));
+        }
+    }
+
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
         MajorityData md = (MajorityData) input;
         md.data0 = X0;
         md.data1 = X1;
-        }
     }
+}
 
 
 

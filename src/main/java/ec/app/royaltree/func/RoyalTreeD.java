@@ -6,10 +6,6 @@
 
 
 package ec.app.royaltree.func;
-import ec.*;
-import ec.app.lid.*;
-import ec.gp.*;
-import ec.util.*;
 
 /*
  * RoyalTreeD.java
@@ -20,8 +16,12 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class RoyalTreeD extends RoyalTreeNode
-    {
-    public int expectedChildren() { return 4; }
-    public char value() { return 'D'; }
+public class RoyalTreeD extends RoyalTreeNode {
+    public int expectedChildren() {
+        return 4;
     }
+
+    public char value() {
+        return 'D';
+    }
+}

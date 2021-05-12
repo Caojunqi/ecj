@@ -7,8 +7,6 @@ package ec.co.ant;
 
 import ec.EvolutionState;
 import ec.Setup;
-import ec.Subpopulation;
-import ec.co.ConstructiveIndividual;
 
 import java.util.List;
 
@@ -17,7 +15,6 @@ import java.util.List;
  *
  * @author Eric O. Scott
  */
-public interface UpdateRule extends Setup
-{
+public interface UpdateRule extends Setup {
     void updatePheromones(final EvolutionState state, final PheromoneTable pheromones, final List individuals);
 }

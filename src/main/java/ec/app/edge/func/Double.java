@@ -6,26 +6,32 @@
 
 
 package ec.app.edge.func;
-import ec.*;
-import ec.app.edge.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.edge.Edge;
+import ec.app.edge.EdgeData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Double.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Double extends GPNode
-    {
-    public String toString() { return "double"; }
+public class Double extends GPNode {
+    public String toString() {
+        return "double";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,49 +46,50 @@ public class Double extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 2; }
+    public int expectedChildren() {
+        return 2;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        int edge = ((EdgeData)(input)).edge;
-        Edge prob = (Edge)problem;
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        int edge = ((EdgeData) (input)).edge;
+        Edge prob = (Edge) problem;
 
-        if (prob.from.length==prob.numEdges)  // we're full, need to expand
-            {
-            int[] from_ = new int[prob.numEdges*2];
-            int[] to_ = new int[prob.numEdges*2];
-            int[] reading_ = new int[prob.numEdges*2];
-            System.arraycopy(prob.from,0,from_,0,prob.from.length);
-            System.arraycopy(prob.to,0,to_,0,prob.to.length);
-            System.arraycopy(prob.reading,0,reading_,0,prob.reading.length);
+        if (prob.from.length == prob.numEdges)  // we're full, need to expand
+        {
+            int[] from_ = new int[prob.numEdges * 2];
+            int[] to_ = new int[prob.numEdges * 2];
+            int[] reading_ = new int[prob.numEdges * 2];
+            System.arraycopy(prob.from, 0, from_, 0, prob.from.length);
+            System.arraycopy(prob.to, 0, to_, 0, prob.to.length);
+            System.arraycopy(prob.reading, 0, reading_, 0, prob.reading.length);
             prob.from = from_;
             prob.to = to_;
             prob.reading = reading_;
-            }
+        }
 
         int newedge = prob.numEdges;
         prob.numEdges++;
         prob.from[newedge] = prob.from[edge];
         prob.to[newedge] = prob.to[edge];
         prob.reading[newedge] = prob.reading[edge];
-        
+
         // pass the original edge down the left child
 
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
 
         // reset input for right child
-        ((EdgeData)(input)).edge = newedge;
+        ((EdgeData) (input)).edge = newedge;
 
         // pass the new edge down the right child
-        
-        children[1].eval(state,thread,input,stack,individual,problem);
-        }
+
+        children[1].eval(state, thread, input, stack, individual, problem);
     }
+}
 
 
 

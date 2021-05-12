@@ -6,16 +6,21 @@
 
 
 package ec.gp.breed;
-import ec.*;
-import ec.util.*;
-import ec.gp.*;
+
+import ec.EvolutionState;
+import ec.Individual;
+import ec.gp.GPBreedingPipeline;
+import ec.gp.GPIndividual;
+import ec.gp.GPInitializer;
+import ec.gp.GPNode;
+import ec.util.Parameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/* 
+/*
  * MutateSwapPipeline.java
- * 
+ *
  * Created: Wed Dec 15 21:41:30 1999
  * By: Sean Luke
  */
@@ -27,7 +32,7 @@ import java.util.HashMap;
  * Crossover", GP98.
  *
  * <p>MutateSwapPipeline picks a random tree, then picks
- * randomly from all the swappable nodes in the tree, and swaps two of its subtrees.  
+ * randomly from all the swappable nodes in the tree, and swaps two of its subtrees.
  * If its chosen tree has no swappable nodes, it repeats
  * the choose-tree process.  If after <i>tries</i> times
  * it has failed to find a tree with swappable nodes, it gives up and simply
@@ -48,78 +53,83 @@ import java.util.HashMap;
  * "swappability".  However, if the number of types is 1 (the
  * GP run is typeless) then the type-constraint-checking
  * code is bypassed and the method runs a little faster.
-
- <p><b>Typical Number of Individuals Produced Per <tt>produce(...)</tt> call</b><br>
- ...as many as the source produces
-
- <p><b>Number of Sources</b><br>
- 1
-
- <p><b>Parameters</b><br>
- <table>
- <tr><td valign=top><i>base</i>.<tt>tries</tt><br>
- <font size=-1>int &gt;= 1</font></td>
- <td valign=top>(number of times to try finding valid pairs of nodes)</td></tr>
-
- <tr><td valign=top><i>base</i>.<tt>tree.0</tt><br>
- <font size=-1>0 &lt; int &lt; (num trees in individuals), if exists</font></td>
- <td valign=top>(tree chosen for mutation; if parameter doesn't exist, tree is picked at random)</td></tr>
- </table>
-
- <p><b>Default Base</b><br>
- gp.breed.mutate-swap
-
-
+ *
+ * <p><b>Typical Number of Individuals Produced Per <tt>produce(...)</tt> call</b><br>
+ * ...as many as the source produces
+ *
+ * <p><b>Number of Sources</b><br>
+ * 1
+ * <p>
+ * p><b>Parameters</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>tries</tt><br>
+ * <font size=-1>int &gt;= 1</font></td>
+ * <td valign=top>(number of times to try finding valid pairs of nodes)</td></tr>
+ *
+ * <tr><td valign=top><i>base</i>.<tt>tree.0</tt><br>
+ * <font size=-1>0 &lt; int &lt; (num trees in individuals), if exists</font></td>
+ * <td valign=top>(tree chosen for mutation; if parameter doesn't exist, tree is picked at random)</td></tr>
+ * </table>
+ *
+ * <p><b>Default Base</b><br>
+ * gp.breed.mutate-swap
+ *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class MutateSwapPipeline extends GPBreedingPipeline
-    {
+public class MutateSwapPipeline extends GPBreedingPipeline {
     public static final String P_MUTATESWAP = "mutate-swap";
     public static final String P_NUM_TRIES = "tries";
     public static final int NUM_SOURCES = 1;
-   
-    /** The number of times the pipeline tries to build a valid mutated
-        tree before it gives up and just passes on the original */
+
+    /**
+     * The number of times the pipeline tries to build a valid mutated
+     * tree before it gives up and just passes on the original
+     */
     int numTries;
 
-    /** Is our tree fixed?  If not, this is -1 */
+    /**
+     * Is our tree fixed?  If not, this is -1
+     */
     int tree;
 
-    public Parameter defaultBase() { return GPBreedDefaults.base().push(P_MUTATESWAP); }
+    public Parameter defaultBase() {
+        return GPBreedDefaults.base().push(P_MUTATESWAP);
+    }
 
-    public int numSources() { return NUM_SOURCES; }
+    public int numSources() {
+        return NUM_SOURCES;
+    }
 
-    public void setup(final EvolutionState state, final Parameter base)
-        {
-        super.setup(state,base);
-        
+    public void setup(final EvolutionState state, final Parameter base) {
+        super.setup(state, base);
+
         Parameter def = defaultBase();
 
         numTries = state.parameters.getInt(base.push(P_NUM_TRIES),
-            def.push(P_NUM_TRIES),1);
+                def.push(P_NUM_TRIES), 1);
         if (numTries == 0)
-            state.output.fatal("MutateSwapPipeline has an invalid number of tries (it must be >= 1).",base.push(P_NUM_TRIES),def.push(P_NUM_TRIES));
+            state.output.fatal("MutateSwapPipeline has an invalid number of tries (it must be >= 1).", base.push(P_NUM_TRIES), def.push(P_NUM_TRIES));
 
         tree = TREE_UNFIXED;
-        if (state.parameters.exists(base.push(P_TREE).push(""+0),
-                def.push(P_TREE).push(""+0)))
-            {
-            tree = state.parameters.getInt(base.push(P_TREE).push(""+0),
-                def.push(P_TREE).push(""+0),0);
-            if (tree==-1)
+        if (state.parameters.exists(base.push(P_TREE).push("" + 0),
+                def.push(P_TREE).push("" + 0))) {
+            tree = state.parameters.getInt(base.push(P_TREE).push("" + 0),
+                    def.push(P_TREE).push("" + 0), 0);
+            if (tree == -1)
                 state.output.fatal("Tree fixed value, if defined, must be >= 0");
-            }
         }
+    }
 
 
-    /** This very expensive method (for types) 
-        might be improved in various ways I guess. */
+    /**
+     * This very expensive method (for types)
+     * might be improved in various ways I guess.
+     */
 
     private boolean swappable(final GPInitializer initializer,
-        final GPNode node)
-        {
+                              final GPNode node) {
         if (node.children.length < 2)
             return false;  // fast check
 
@@ -127,33 +137,31 @@ public class MutateSwapPipeline extends GPBreedingPipeline
             return true;  // next fast check
 
         // we're typed, so now we have to check our type compatibility
-        for(int x=0;x<node.constraints(initializer).childtypes.length-1;x++)
-            for(int y=x+1;y<node.constraints(initializer).childtypes.length;y++)
+        for (int x = 0; x < node.constraints(initializer).childtypes.length - 1; x++)
+            for (int y = x + 1; y < node.constraints(initializer).childtypes.length; y++)
                 if (node.children[x].constraints(initializer).returntype.compatibleWith(initializer,
                         node.constraints(initializer).childtypes[y]) &&
-                    node.children[y].constraints(initializer).returntype.compatibleWith(initializer,
-                        node.constraints(initializer).childtypes[x]))
+                        node.children[y].constraints(initializer).returntype.compatibleWith(initializer,
+                                node.constraints(initializer).childtypes[x]))
                     // whew!
                     return true;
         return false;
-        }
-    
-    
-    private void swapSomething(final GPNode node, final EvolutionState state, final int thread)
-        {
-        if (((GPInitializer)state.initializer).numAtomicTypes + ((GPInitializer)state.initializer).numSetTypes == 1) // typeless
-            _swapSomethingTypeless(node,state,thread);
-        else _swapSomething(node,state,thread);
-        }
+    }
 
-    private void _swapSomethingTypeless(final GPNode node, final EvolutionState state, final int thread)
-        {
+
+    private void swapSomething(final GPNode node, final EvolutionState state, final int thread) {
+        if (((GPInitializer) state.initializer).numAtomicTypes + ((GPInitializer) state.initializer).numSetTypes == 1) // typeless
+            _swapSomethingTypeless(node, state, thread);
+        else _swapSomething(node, state, thread);
+    }
+
+    private void _swapSomethingTypeless(final GPNode node, final EvolutionState state, final int thread) {
         // assumes that number of child nodes >= 2
 
         // pick a random first node
         int x = state.random[thread].nextInt(node.children.length);
         // pick a random second node
-        int y = state.random[thread].nextInt(node.children.length-1);
+        int y = state.random[thread].nextInt(node.children.length - 1);
         if (y >= x) y++; // adjust for first node
 
         // swap the nodes
@@ -161,147 +169,135 @@ public class MutateSwapPipeline extends GPBreedingPipeline
         GPNode tmp = node.children[x];
         node.children[x] = node.children[y];
         node.children[y] = tmp;
-        node.children[x].argposition = (byte)x;
-        node.children[y].argposition = (byte)y;
+        node.children[x].argposition = (byte) x;
+        node.children[y].argposition = (byte) y;
         // no need to set parent -- it's the same parent of course
-        }
+    }
 
-    
-    private void _swapSomething(final GPNode node, final EvolutionState state, final int thread)
-        {
+
+    private void _swapSomething(final GPNode node, final EvolutionState state, final int thread) {
         int numSwappable = 0;
-        GPInitializer initializer = ((GPInitializer)state.initializer);
-        for(int x=0;x<node.constraints(initializer).childtypes.length-1;x++)
-            for(int y=x+1;y<node.constraints(initializer).childtypes.length;y++)
+        GPInitializer initializer = ((GPInitializer) state.initializer);
+        for (int x = 0; x < node.constraints(initializer).childtypes.length - 1; x++)
+            for (int y = x + 1; y < node.constraints(initializer).childtypes.length; y++)
                 if (node.children[x].constraints(initializer).returntype.compatibleWith(initializer,
                         node.constraints(initializer).childtypes[y]) &&
-                    node.children[y].constraints(initializer).returntype.compatibleWith(initializer,
-                        node.constraints(initializer).childtypes[x]))
+                        node.children[y].constraints(initializer).returntype.compatibleWith(initializer,
+                                node.constraints(initializer).childtypes[x]))
                     // whew!
                     numSwappable++;
 
         // pick a random item to swap -- numSwappable is assumed to be > 0
         int swapItem = state.random[thread].nextInt(numSwappable);
 
-        numSwappable=0;
+        numSwappable = 0;
         // find it
 
-        for(int x=0;x<node.constraints(initializer).childtypes.length-1;x++)
-            for(int y=x+1;y<node.constraints(initializer).childtypes.length;y++)
+        for (int x = 0; x < node.constraints(initializer).childtypes.length - 1; x++)
+            for (int y = x + 1; y < node.constraints(initializer).childtypes.length; y++)
                 if (node.children[x].constraints(initializer).returntype.compatibleWith(initializer,
                         node.constraints(initializer).childtypes[y]) &&
-                    node.children[y].constraints(initializer).returntype.compatibleWith(initializer,
-                        node.constraints(initializer).childtypes[x]))
+                        node.children[y].constraints(initializer).returntype.compatibleWith(initializer,
+                                node.constraints(initializer).childtypes[x])) {
+                    if (numSwappable == swapItem) // found it
                     {
-                    if (numSwappable==swapItem) // found it
-                        {
                         // swap the children
                         GPNode tmp = node.children[x];
                         node.children[x] = node.children[y];
                         node.children[y] = tmp;
-                        node.children[x].argposition = (byte)x;
-                        node.children[y].argposition = (byte)y;
+                        node.children[x].argposition = (byte) x;
+                        node.children[y].argposition = (byte) y;
                         // no need to set parent -- it's the same parent of course
                         return;
-                        }
-                    else numSwappable++;
-                    }
-        }
+                    } else numSwappable++;
+                }
+    }
 
 
     private int numSwappableNodes(final GPInitializer initializer,
-        final GPNode root, int soFar)
-        {
+                                  final GPNode root, int soFar) {
         if (swappable(initializer, root)) soFar++;
-        for(int x=0;x<root.children.length;x++) 
-            soFar = numSwappableNodes(initializer, root.children[x],soFar);
+        for (int x = 0; x < root.children.length; x++)
+            soFar = numSwappableNodes(initializer, root.children[x], soFar);
         return soFar;
-        }
+    }
 
 
     private GPNode swappableNode;
 
     // sticks the node in 
     private int pickSwappableNode(final GPInitializer initializer,
-        final GPNode root, int num)
-        {
-        if (swappable(initializer, root))
-            {
+                                  final GPNode root, int num) {
+        if (swappable(initializer, root)) {
             num--;
-            if (num==-1)  // found it
-                {
+            if (num == -1)  // found it
+            {
                 swappableNode = root;
                 return num;
-                }
             }
-        for(int x=0;x<root.children.length;x++)
-            {
-            num = pickSwappableNode(initializer, root.children[x],num);
-            if (num==-1) break;  // someone found it
-            }
-        return num;     
         }
-    
+        for (int x = 0; x < root.children.length; x++) {
+            num = pickSwappableNode(initializer, root.children[x], num);
+            if (num == -1) break;  // someone found it
+        }
+        return num;
+    }
+
 
     public int produce(final int min,
-        final int max,
-        final int subpopulation,
-        final ArrayList<Individual> inds,
-        final EvolutionState state,
-        final int thread, HashMap<String, Object> misc)
-        {
+                       final int max,
+                       final int subpopulation,
+                       final ArrayList<Individual> inds,
+                       final EvolutionState state,
+                       final int thread, HashMap<String, Object> misc) {
         int start = inds.size();
-                
+
         // grab n individuals from our source and stick 'em right into inds.
         // we'll modify them from there
-        int n = sources[0].produce(min,max,subpopulation,inds, state,thread, misc);
+        int n = sources[0].produce(min, max, subpopulation, inds, state, thread, misc);
 
         // should we bother?
-        if (!state.random[thread].nextBoolean(likelihood))
-            {
+        if (!state.random[thread].nextBoolean(likelihood)) {
             return n;
-            }
-
+        }
 
 
         // now let's mutate 'em
-        for(int q=start; q < n+start; q++)
-            {
-            GPIndividual i = (GPIndividual)inds.get(q);
-            
-            if (tree!=TREE_UNFIXED && (tree<0 || tree >= i.trees.length))
+        for (int q = start; q < n + start; q++) {
+            GPIndividual i = (GPIndividual) inds.get(q);
+
+            if (tree != TREE_UNFIXED && (tree < 0 || tree >= i.trees.length))
                 // uh oh
-                state.output.fatal("MutateSwapPipeline attempted to fix tree.0 to a value which was out of bounds of the array of the individual's trees.  Check the pipeline's fixed tree values -- they may be negative or greater than the number of trees in an individual"); 
-            
-            
-            for (int x=0;x<numTries;x++)
-                {
+                state.output.fatal("MutateSwapPipeline attempted to fix tree.0 to a value which was out of bounds of the array of the individual's trees.  Check the pipeline's fixed tree values -- they may be negative or greater than the number of trees in an individual");
+
+
+            for (int x = 0; x < numTries; x++) {
                 int t;
                 // pick random tree
-                if (tree==TREE_UNFIXED)
-                    if (i.trees.length>1) t = state.random[thread].nextInt(i.trees.length);
+                if (tree == TREE_UNFIXED)
+                    if (i.trees.length > 1) t = state.random[thread].nextInt(i.trees.length);
                     else t = 0;
                 else t = tree;
-                
+
                 // is the tree swappable?      
-                GPInitializer initializer = ((GPInitializer)state.initializer);
-                int numswap = numSwappableNodes(initializer, i.trees[t].child,0);
-                if (numswap==0) continue; // uh oh, try again
-                
+                GPInitializer initializer = ((GPInitializer) state.initializer);
+                int numswap = numSwappableNodes(initializer, i.trees[t].child, 0);
+                if (numswap == 0) continue; // uh oh, try again
+
                 // swap the node, or if we're unsuccessful, just leave it alone
-                pickSwappableNode(initializer, i.trees[t].child,state.random[thread].nextInt(numswap));
-                
+                pickSwappableNode(initializer, i.trees[t].child, state.random[thread].nextInt(numswap));
+
                 // node is now in swappableNode, swap it
-                swapSomething(swappableNode,state,thread);
+                swapSomething(swappableNode, state, thread);
 
                 i.evaluated = false;
                 break;
-                }
+            }
 
             // add the new individual, replacing its previous source
-            inds.set(q,i);
-            
-            }
-        return n;
+            inds.set(q, i);
+
         }
+        return n;
     }
+}

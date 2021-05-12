@@ -6,15 +6,18 @@
 
 
 package ec.app.lawnmower;
-import ec.util.*;
-import ec.*;
-import ec.gp.*;
-import ec.gp.koza.*;
-import ec.simple.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Individual;
+import ec.gp.GPIndividual;
+import ec.gp.GPProblem;
+import ec.gp.koza.KozaFitness;
+import ec.simple.SimpleProblemForm;
+import ec.util.Parameter;
+
+/*
  * Lawnmower.java
- * 
+ *
  * Created: Mon Nov  1 15:46:19 1999
  * By: Sean Luke
  */
@@ -22,31 +25,30 @@ import ec.simple.*;
 /**
  * Lawnmower implements the Koza-II Lawnmower problem.
  *
- <p><b>Parameters</b><br>
- <table>
- <tr><td valign=top><i>base</i>.<tt>data</tt><br>
- <font size=-1>classname, inherits or == ec.app.lawnmower.LawnmowerData</font></td>
- <td valign=top>(the class for the prototypical GPData object for the Lawnmower problem)</td></tr>
- <tr><td valign=top><i>base</i>.<tt>file</tt><br>
- <font size=-1>String</font></td>
- <td valign=top>(filename of the .trl file for the Lawnmower problem)</td></tr>
- <tr><td valign=top><i>base</i>.<tt>turns</tt><br>
- <font size=-1>int &gt;= 1</td>
- <td valign=top>(maximal number of moves the lawnmower may make)</td></tr>
- </table>
-
- <p><b>Parameter bases</b><br>
- <table>
- <tr><td valign=top><i>base</i>.<tt>data</tt></td>
- <td>species (the GPData object)</td></tr>
- </table>
+ * <p><b>Parameters</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>data</tt><br>
+ * <font size=-1>classname, inherits or == ec.app.lawnmower.LawnmowerData</font></td>
+ * <td valign=top>(the class for the prototypical GPData object for the Lawnmower problem)</td></tr>
+ * <tr><td valign=top><i>base</i>.<tt>file</tt><br>
+ * <font size=-1>String</font></td>
+ * <td valign=top>(filename of the .trl file for the Lawnmower problem)</td></tr>
+ * <tr><td valign=top><i>base</i>.<tt>turns</tt><br>
+ * <font size=-1>int &gt;= 1</td>
+ * <td valign=top>(maximal number of moves the lawnmower may make)</td></tr>
+ * </table>
+ *
+ * <p><b>Parameter bases</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>data</tt></td>
+ * <td>species (the GPData object)</td></tr>
+ * </table>
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Lawnmower extends GPProblem implements SimpleProblemForm
-    {
+public class Lawnmower extends GPProblem implements SimpleProblemForm {
     private static final long serialVersionUID = 1;
 
     public static final String P_X = "x";
@@ -63,7 +65,7 @@ public class Lawnmower extends GPProblem implements SimpleProblemForm
 
     // our map
     public int map[][];
-    
+
     // map[][]'s bounds
     public int maxx;
     public int maxy;
@@ -74,7 +76,7 @@ public class Lawnmower extends GPProblem implements SimpleProblemForm
 
     // how many points we've gotten
     public int sum;
-    
+
     // our orientation
     public int orientation;
 
@@ -84,20 +86,18 @@ public class Lawnmower extends GPProblem implements SimpleProblemForm
     // print modulo for doing the abcdefg.... thing at print-time
     public int pmod;
 
-    public Object clone()
-        {
+    public Object clone() {
         Lawnmower myobj = (Lawnmower) (super.clone());
         myobj.map = new int[map.length][];
-        for(int x=0;x<map.length;x++)
-            myobj.map[x] = (int[])(map[x].clone());
+        for (int x = 0; x < map.length; x++)
+            myobj.map[x] = (int[]) (map[x].clone());
         return myobj;
-        }
+    }
 
     public void setup(final EvolutionState state,
-        final Parameter base)
-        {
+                      final Parameter base) {
         // very important, remember this
-        super.setup(state,base);
+        super.setup(state, base);
 
         // I'm not using the default base for any of this stuff;
         // it's not safe I think.
@@ -105,117 +105,112 @@ public class Lawnmower extends GPProblem implements SimpleProblemForm
         // verify our input is the right class (or subclasses from it)
         if (!(input instanceof LawnmowerData))
             state.output.fatal("GPData class must subclass from " + LawnmowerData.class,
-                base.push(P_DATA), null);
+                    base.push(P_DATA), null);
 
         // load our map coordinates
-        maxx = state.parameters.getInt(base.push(P_X),null,1);
-        if (maxx==0)
+        maxx = state.parameters.getInt(base.push(P_X), null, 1);
+        if (maxx == 0)
             state.output.error("The width (x dimension) of the lawn must be >0",
-                base.push(P_X));
-        maxy = state.parameters.getInt(base.push(P_Y),null,1);
-        if (maxy==0)
+                    base.push(P_X));
+        maxy = state.parameters.getInt(base.push(P_Y), null, 1);
+        if (maxy == 0)
             state.output.error("The length (y dimension) of the lawn must be >0",
-                base.push(P_Y));
+                    base.push(P_Y));
         state.output.exitIfErrors();
-            
-        // set up the map
-        
-        map = new int[maxx][maxy];
-        for(int x=0;x<maxx;x++)
-            for(int y=0;y<maxy;y++)
-                map[x][y]=UNMOWED;
-        }
 
-    public void evaluate(final EvolutionState state, 
-        final Individual ind, 
-        final int subpopulation,
-        final int threadnum)
-        {               
+        // set up the map
+
+        map = new int[maxx][maxy];
+        for (int x = 0; x < maxx; x++)
+            for (int y = 0; y < maxy; y++)
+                map[x][y] = UNMOWED;
+    }
+
+    public void evaluate(final EvolutionState state,
+                         final Individual ind,
+                         final int subpopulation,
+                         final int threadnum) {
         if (!ind.evaluated)  // don't bother reevaluating
-            {
-            LawnmowerData input = (LawnmowerData)(this.input);
-        
+        {
+            LawnmowerData input = (LawnmowerData) (this.input);
+
             sum = 0;
             moves = 0;
-            posx = maxx/2+1;
-            posy = maxy/2+1;
+            posx = maxx / 2 + 1;
+            posy = maxy / 2 + 1;
             orientation = O_UP;
 
             // evaluate the individual
-            ((GPIndividual)ind).trees[0].child.eval(
-                state,threadnum,input,stack,((GPIndividual)ind),this);
-                
+            ((GPIndividual) ind).trees[0].child.eval(
+                    state, threadnum, input, stack, ((GPIndividual) ind), this);
+
             // clean up the map
-            for(int x=0;x<maxx;x++)
-                for(int y=0;y<maxy;y++)
-                    map[x][y]=UNMOWED;
+            for (int x = 0; x < maxx; x++)
+                for (int y = 0; y < maxy; y++)
+                    map[x][y] = UNMOWED;
 
             // the fitness better be KozaFitness!
-            KozaFitness f = ((KozaFitness)ind.fitness);
-            f.setStandardizedFitness(state, maxx*maxy - sum);
+            KozaFitness f = ((KozaFitness) ind.fitness);
+            f.setStandardizedFitness(state, maxx * maxy - sum);
             f.hits = sum;
             ind.evaluated = true;
-            }
-        }
-
-    public void describe(
-        final EvolutionState state, 
-        final Individual ind, 
-        final int subpopulation, 
-        final int threadnum, 
-        final int log)
-        {
-        state.output.println("\n\nBest Individual's Map\n=====================", log);
-        
-        sum = 0;
-        moves = 0;
-        posx = maxx/2+1;
-        posy = maxy/2+1;
-        orientation = O_UP;
-            
-        // evaluate the individual
-        ((GPIndividual)ind).trees[0].child.eval(
-            state,threadnum,input,stack,((GPIndividual)ind),this);
-            
-        // print out the map
-        state.output.println(" Y ->", log);
-        for(int x=0;x<map.length;x++)
-            {
-            if (x==1) state.output.print("v", log);
-            else if (x==0) state.output.print("X",log);
-            else state.output.print(" ",log);
-            state.output.print("+",log);
-            for(int y=0;y<map[x].length;y++)
-                state.output.print("----+",log);
-            state.output.println("",log);
-            if (x==0) state.output.print("|",log);
-            else state.output.print(" ",log);
-            state.output.print("|",log);
-                
-            for(int y=0;y<map[x].length;y++)
-                {
-                if (map[x][y]==UNMOWED)
-                    state.output.print("    ",log);
-                else 
-                    {
-                    String s = "" + (map[x][y]);
-                    while (s.length()<4) s = " " + s;
-                    state.output.print(s + "|",log);
-                    }
-                }
-            state.output.println("",log);
-            }
-        if (map.length==1) state.output.print("v",log);
-        else state.output.print(" ",log);
-        state.output.print("+",log);
-        for(int y=0;y<map[map.length-1].length;y++)
-            state.output.print("----+",log);
-        state.output.println("",log);
-            
-            
-        // clean up the map
-        for(int x=0;x<maxx;x++)
-            for(int y=0;y<maxy;y++)
-                map[x][y]=UNMOWED;
         }
     }
+
+    public void describe(
+            final EvolutionState state,
+            final Individual ind,
+            final int subpopulation,
+            final int threadnum,
+            final int log) {
+        state.output.println("\n\nBest Individual's Map\n=====================", log);
+
+        sum = 0;
+        moves = 0;
+        posx = maxx / 2 + 1;
+        posy = maxy / 2 + 1;
+        orientation = O_UP;
+
+        // evaluate the individual
+        ((GPIndividual) ind).trees[0].child.eval(
+                state, threadnum, input, stack, ((GPIndividual) ind), this);
+
+        // print out the map
+        state.output.println(" Y ->", log);
+        for (int x = 0; x < map.length; x++) {
+            if (x == 1) state.output.print("v", log);
+            else if (x == 0) state.output.print("X", log);
+            else state.output.print(" ", log);
+            state.output.print("+", log);
+            for (int y = 0; y < map[x].length; y++)
+                state.output.print("----+", log);
+            state.output.println("", log);
+            if (x == 0) state.output.print("|", log);
+            else state.output.print(" ", log);
+            state.output.print("|", log);
+
+            for (int y = 0; y < map[x].length; y++) {
+                if (map[x][y] == UNMOWED)
+                    state.output.print("    ", log);
+                else {
+                    String s = "" + (map[x][y]);
+                    while (s.length() < 4) s = " " + s;
+                    state.output.print(s + "|", log);
+                }
+            }
+            state.output.println("", log);
+        }
+        if (map.length == 1) state.output.print("v", log);
+        else state.output.print(" ", log);
+        state.output.print("+", log);
+        for (int y = 0; y < map[map.length - 1].length; y++)
+            state.output.print("----+", log);
+        state.output.println("", log);
+
+
+        // clean up the map
+        for (int x = 0; x < maxx; x++)
+            for (int y = 0; y < maxy; y++)
+                map[x][y] = UNMOWED;
+    }
+}

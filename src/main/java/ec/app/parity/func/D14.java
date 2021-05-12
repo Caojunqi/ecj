@@ -6,26 +6,32 @@
 
 
 package ec.app.parity.func;
-import ec.*;
-import ec.app.parity.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.parity.Parity;
+import ec.app.parity.ParityData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * D14.java
- * 
+ *
  * Created: Wed Nov  3 18:26:38 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class D14 extends GPNode
-    {
-    public String toString() { return "D14"; }
+public class D14 extends GPNode {
+    public String toString() {
+        return "D14";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,19 +46,20 @@ public class D14 extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        ((ParityData)input).x = 
-            ((((Parity)problem).bits >>> 14 ) & 1);
-        }
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        ((ParityData) input).x =
+                ((((Parity) problem).bits >>> 14) & 1);
     }
+}
 
 
 

@@ -7,9 +7,9 @@
 
 package ec.util;
 
-/* 
+/*
  * ParamClassLoadException.java
- * 
+ *
  * Created: Tue Aug 10 21:22:08 1999
  * By: Sean Luke
  */
@@ -22,11 +22,11 @@ package ec.util;
  * or declare that you throw it.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class ParamClassLoadException extends RuntimeException
-    {
-    public ParamClassLoadException(String s)
-        { super("\n"+s); }
+public class ParamClassLoadException extends RuntimeException {
+    public ParamClassLoadException(String s) {
+        super("\n" + s);
     }
+}

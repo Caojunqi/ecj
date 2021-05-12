@@ -6,14 +6,14 @@
 
 
 package ec.es;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-import ec.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Population;
 
-/* 
+/*
  * MuPlusLambdaBreeder.java
- * 
+ *
  * Created: Thu Sep  7 18:49:42 2000
  * By: Sean Luke
  */
@@ -27,14 +27,17 @@ import ec.*;
  * See MuCommaLambdaBreeder for information about how to set mu and lambda.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class MuPlusLambdaBreeder extends MuCommaLambdaBreeder
-    {
-    public int maximumMuLambdaDivisor() { return 1; }
- 
-    /** Sets all subpopulations in pop to the expected mu+lambda size.  Does not fill new slots with individuals. */
+public class MuPlusLambdaBreeder extends MuCommaLambdaBreeder {
+    public int maximumMuLambdaDivisor() {
+        return 1;
+    }
+
+    /**
+     * Sets all subpopulations in pop to the expected mu+lambda size.  Does not fill new slots with individuals.
+     */
     //    public Population setToMuPlusLambda(Population pop, EvolutionState state)
     //        {
     //        for(int x = 0; x< pop.subpops.size(); x++)
@@ -56,19 +59,16 @@ public class MuPlusLambdaBreeder extends MuCommaLambdaBreeder
     //        }
 
     // by Ermo. I guess the method on the top is useless now, and accordingly, I changed the method at the bottom to this form
-    public Population postProcess(Population newpop, Population oldpop, EvolutionState state)
-        {
+    public Population postProcess(Population newpop, Population oldpop, EvolutionState state) {
         // now we need to dump the old population into the high end of the new population
-        for(int x = 0; x< newpop.subpops.size(); x++)
-            {
-            for(int y=0;y<mu[x];y++)
-                {
-                newpop.subpops.get(x).individuals.add((Individual)(oldpop.subpops.get(x).individuals.get(y).clone()));
-                }
+        for (int x = 0; x < newpop.subpops.size(); x++) {
+            for (int y = 0; y < mu[x]; y++) {
+                newpop.subpops.get(x).individuals.add((Individual) (oldpop.subpops.get(x).individuals.get(y).clone()));
             }
-        return newpop;
         }
-    
+        return newpop;
+    }
+
     //    public Population postProcess(Population newpop, Population oldpop, EvolutionState state)
     //        {
     //        // first we need to expand newpop to mu+lambda in size
@@ -86,4 +86,4 @@ public class MuPlusLambdaBreeder extends MuCommaLambdaBreeder
     //            }
     //        return newpop;
     //        }
-    }
+}

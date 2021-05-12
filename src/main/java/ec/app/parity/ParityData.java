@@ -6,25 +6,26 @@
 
 
 package ec.app.parity;
-import ec.gp.*;
 
-/* 
+import ec.gp.GPData;
+
+/*
  * ParityData.java
- * 
+ *
  * Created: Wed Nov  3 18:32:13 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class ParityData extends GPData
-    {
+public class ParityData extends GPData {
     // return value -- should ALWAYS be either 1 or 0
     public int x;
 
-    public void copyTo(final GPData gpd) 
-        { ((ParityData)gpd).x = x; }
+    public void copyTo(final GPData gpd) {
+        ((ParityData) gpd).x = x;
     }
+}

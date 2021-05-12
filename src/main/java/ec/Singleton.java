@@ -7,9 +7,9 @@
 
 package ec;
 
-/* 
+/*
  * Singleton.java
- * 
+ *
  * Created: Wed Oct 13 14:57:00 1999
  * By: Sean Luke
  */
@@ -21,9 +21,8 @@ package ec;
  * when they are first created.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public interface Singleton extends Setup
-    {
-    }
+public interface Singleton extends Setup {
+}

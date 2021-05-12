@@ -6,10 +6,13 @@
 
 
 package ec.app.lid.func;
-import ec.*;
-import ec.app.lid.*;
-import ec.gp.*;
-import ec.util.*;
+
+import ec.EvolutionState;
+import ec.Problem;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
 
 /*
  * LidX.java
@@ -22,20 +25,22 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class LidX extends GPNode
-    {
-    public String toString() { return "X"; }
+public class LidX extends GPNode {
+    public String toString() {
+        return "X";
+    }
 
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
         // No need to evaluate or look at children. Lid is only
         // about tree shape/size
-        }
     }
+}

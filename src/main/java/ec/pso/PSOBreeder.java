@@ -1,8 +1,11 @@
 package ec.pso;
 
-import ec.* ;
-import ec.util.* ;
-import ec.vector.* ;
+import ec.Breeder;
+import ec.EvolutionState;
+import ec.Fitness;
+import ec.Population;
+import ec.util.Parameter;
+import ec.vector.DoubleVectorIndividual;
 
 
 /*
@@ -11,8 +14,8 @@ import ec.vector.* ;
  */
 
 /**
- * PSOBreeder is a simple single-threaded Breeder which performs 
- * Particle Swarm Optimization using the Particle class as individuals. 
+ * PSOBreeder is a simple single-threaded Breeder which performs
+ * Particle Swarm Optimization using the Particle class as individuals.
  * PSOBreeder relies on a number of parameters which define weights for
  * various vectors computed during Particle Swarm Optimization, plus
  * a few flags:
@@ -25,7 +28,7 @@ import ec.vector.* ;
  * <li> random-each-time: pick S informants randomly without replacement within the subpopulation, not including the particle itself, every single generation.
  * <li> toroidal: pick the floor(S/2) informants to the left of the particle's location within the subpopulation and the ceiling(S/2) informants to the right of the particle's location in the subpopulation, once at the beginning of the run.
  * </ul>
- * <li> To this you can add the particle itself to the neighborhood, with include-self. 
+ * <li> To this you can add the particle itself to the neighborhood, with include-self.
  * <li> The basic velocity update equation is VELOCITY <-- (VELOCITY * velocity-coefficent) + (VECTOR-TO-GLOBAL-BEST * global-coefficient) + (VECTOR-TO-NEIGHBORHOOD-BEST * informant-coefficient) + (VECTOR-TO-PERSONAL-BEST * personal-coefficient)
  * <li> The basic particle update equation is PARTICLE <-- PARTICLE + VELOCITY
  * </ul>
@@ -69,113 +72,100 @@ import ec.vector.* ;
  */
 
 
-public class PSOBreeder extends Breeder
-    {
+public class PSOBreeder extends Breeder {
     public static final int C_NEIGHBORHOOD_RANDOM = 0;
     public static final int C_NEIGHBORHOOD_TOROIDAL = 1;
     public static final int C_NEIGHBORHOOD_RANDOM_EACH_TIME = 2;
 
-    public static final String P_VELOCITY_COEFFICIENT = "velocity-coefficient" ;
-    public static final String P_PERSONAL_COEFFICIENT = "personal-coefficient" ;
-    public static final String P_INFORMANT_COEFFICIENT = "informant-coefficient" ;
-    public static final String P_GLOBAL_COEFFICIENT = "global-coefficient" ;
-    public static final String P_INCLUDE_SELF = "include-self" ;
-    public static final String P_NEIGHBORHOOD = "neighborhood-style" ;
-    public static final String P_NEIGHBORHOOD_SIZE = "neighborhood-size" ;
+    public static final String P_VELOCITY_COEFFICIENT = "velocity-coefficient";
+    public static final String P_PERSONAL_COEFFICIENT = "personal-coefficient";
+    public static final String P_INFORMANT_COEFFICIENT = "informant-coefficient";
+    public static final String P_GLOBAL_COEFFICIENT = "global-coefficient";
+    public static final String P_INCLUDE_SELF = "include-self";
+    public static final String P_NEIGHBORHOOD = "neighborhood-style";
+    public static final String P_NEIGHBORHOOD_SIZE = "neighborhood-size";
     public static final String V_NEIGHBORHOOD_RANDOM = "random";
     public static final String V_NEIGHBORHOOD_TOROIDAL = "toroidal";
     public static final String V_NEIGHBORHOOD_RANDOM_EACH_TIME = "random-each-time";
 
     public int neighborhood = C_NEIGHBORHOOD_RANDOM;        // default neighborhood scheme
-    public double velCoeff = 0.5 ;          //  coefficient for the velocity
-    public double personalCoeff = 0.5 ;             //  coefficient for self
-    public double informantCoeff = 0.5 ;            //  coefficient for informants/neighbours
-    public double globalCoeff = 0.5 ;               //  coefficient for global best, this is not done in the standard PSO
-    public int neighborhoodSize = 3 ; 
-    public boolean includeSelf = false;         
+    public double velCoeff = 0.5;          //  coefficient for the velocity
+    public double personalCoeff = 0.5;             //  coefficient for self
+    public double informantCoeff = 0.5;            //  coefficient for informants/neighbours
+    public double globalCoeff = 0.5;               //  coefficient for global best, this is not done in the standard PSO
+    public int neighborhoodSize = 3;
+    public boolean includeSelf = false;
 
-    public double[][] globalBest = null ; // one for each subpopulation
+    public double[][] globalBest = null; // one for each subpopulation
     public Fitness[] globalBestFitness = null;
 
-    public void setup(final EvolutionState state, final Parameter base)
-        {
-        velCoeff = state.parameters.getDouble(base.push(P_VELOCITY_COEFFICIENT),null,0.0);
-        if ( velCoeff < 0.0 )
-            state.output.fatal( "Parameter not found, or its value is less than 0.", base.push(P_VELOCITY_COEFFICIENT), null );
+    public void setup(final EvolutionState state, final Parameter base) {
+        velCoeff = state.parameters.getDouble(base.push(P_VELOCITY_COEFFICIENT), null, 0.0);
+        if (velCoeff < 0.0)
+            state.output.fatal("Parameter not found, or its value is less than 0.", base.push(P_VELOCITY_COEFFICIENT), null);
 
-        personalCoeff = state.parameters.getDouble(base.push(P_PERSONAL_COEFFICIENT),null,0.0);
-        if ( personalCoeff < 0.0)
-            state.output.fatal( "Parameter not found, or its value is less than 0.", base.push(P_PERSONAL_COEFFICIENT), null );
+        personalCoeff = state.parameters.getDouble(base.push(P_PERSONAL_COEFFICIENT), null, 0.0);
+        if (personalCoeff < 0.0)
+            state.output.fatal("Parameter not found, or its value is less than 0.", base.push(P_PERSONAL_COEFFICIENT), null);
 
-        informantCoeff = state.parameters.getDouble(base.push(P_INFORMANT_COEFFICIENT),null,0.0);
-        if ( informantCoeff < 0.0)
-            state.output.fatal( "Parameter not found, or its value is less than 0.", base.push(P_INFORMANT_COEFFICIENT), null );
+        informantCoeff = state.parameters.getDouble(base.push(P_INFORMANT_COEFFICIENT), null, 0.0);
+        if (informantCoeff < 0.0)
+            state.output.fatal("Parameter not found, or its value is less than 0.", base.push(P_INFORMANT_COEFFICIENT), null);
 
-        globalCoeff = state.parameters.getDouble(base.push(P_GLOBAL_COEFFICIENT),null,0.0);
-        if ( globalCoeff < 0.0 )
-            state.output.fatal( "Parameter not found, or its value is less than 0.", base.push(P_GLOBAL_COEFFICIENT), null );
+        globalCoeff = state.parameters.getDouble(base.push(P_GLOBAL_COEFFICIENT), null, 0.0);
+        if (globalCoeff < 0.0)
+            state.output.fatal("Parameter not found, or its value is less than 0.", base.push(P_GLOBAL_COEFFICIENT), null);
 
-        neighborhoodSize = state.parameters.getInt(base.push(P_NEIGHBORHOOD_SIZE), null, 1);               
-        if (neighborhoodSize <= 0 )
+        neighborhoodSize = state.parameters.getInt(base.push(P_NEIGHBORHOOD_SIZE), null, 1);
+        if (neighborhoodSize <= 0)
             state.output.fatal("Neighbourhood size must be a value >= 1.", base.push(P_NEIGHBORHOOD_SIZE), null);
-                        
+
         String sch = state.parameters.getString(base.push(P_NEIGHBORHOOD), null);
-        if (V_NEIGHBORHOOD_RANDOM.equals(sch))
-            {
+        if (V_NEIGHBORHOOD_RANDOM.equals(sch)) {
             neighborhood = C_NEIGHBORHOOD_RANDOM; // default anyway
-            }
-        else if (V_NEIGHBORHOOD_TOROIDAL.equals(sch))
-            {
+        } else if (V_NEIGHBORHOOD_TOROIDAL.equals(sch)) {
             neighborhood = C_NEIGHBORHOOD_TOROIDAL;
-            }
-        else if (V_NEIGHBORHOOD_RANDOM_EACH_TIME.equals(sch))
-            {
+        } else if (V_NEIGHBORHOOD_RANDOM_EACH_TIME.equals(sch)) {
             neighborhood = C_NEIGHBORHOOD_RANDOM_EACH_TIME;
-            }
-        else state.output.fatal( "Neighborhood style must be either 'random', 'toroidal', or 'random-each-time'.", base.push(P_NEIGHBORHOOD), null );
+        } else
+            state.output.fatal("Neighborhood style must be either 'random', 'toroidal', or 'random-each-time'.", base.push(P_NEIGHBORHOOD), null);
 
-        includeSelf = state.parameters.getBoolean(base.push(P_INCLUDE_SELF), null, false);               
-        }
+        includeSelf = state.parameters.getBoolean(base.push(P_INCLUDE_SELF), null, false);
+    }
 
-    public Population breedPopulation(EvolutionState state)
-        {
+    public Population breedPopulation(EvolutionState state) {
         // initialize the global best
-        if (globalBest == null)
-            {
+        if (globalBest == null) {
             globalBest = new double[state.population.subpops.size()][];
             globalBestFitness = new Fitness[state.population.subpops.size()];
-            }
-                
+        }
+
         // update global best, neighborhood best, and personal best 
-        for(int subpop = 0; subpop < state.population.subpops.size(); subpop++)
-            {
-            for(int ind = 0; ind < state.population.subpops.get(subpop).individuals.size() ; ind++)
-                {
+        for (int subpop = 0; subpop < state.population.subpops.size(); subpop++) {
+            for (int ind = 0; ind < state.population.subpops.get(subpop).individuals.size(); ind++) {
                 if (globalBestFitness[subpop] == null ||
-                    state.population.subpops.get(subpop).individuals.get(ind).fitness.betterThan(globalBestFitness[subpop]))
-                    {
+                        state.population.subpops.get(subpop).individuals.get(ind).fitness.betterThan(globalBestFitness[subpop])) {
                     globalBest[subpop] = ((DoubleVectorIndividual) state.population.subpops.get(subpop).individuals.get(ind)).genome;
                     globalBestFitness[subpop] = state.population.subpops.get(subpop).individuals.get(ind).fitness;
-                    }
-                ((Particle) state.population.subpops.get(subpop).individuals.get(ind)).update(state, subpop, ind, 0);
                 }
-            // clone global best
-            globalBest[subpop] = (double[])(globalBest[subpop].clone());
-            globalBestFitness[subpop] = (Fitness)(globalBestFitness[subpop].clone());
+                ((Particle) state.population.subpops.get(subpop).individuals.get(ind)).update(state, subpop, ind, 0);
             }
+            // clone global best
+            globalBest[subpop] = (double[]) (globalBest[subpop].clone());
+            globalBestFitness[subpop] = (Fitness) (globalBestFitness[subpop].clone());
+        }
 
 
         // now move the particles
-        for(int subpop = 0; subpop < state.population.subpops.size(); subpop++)
-            {
-            for(int ind = 0; ind < state.population.subpops.get(subpop).individuals.size() ; ind++)
+        for (int subpop = 0; subpop < state.population.subpops.size(); subpop++) {
+            for (int ind = 0; ind < state.population.subpops.get(subpop).individuals.size(); ind++)
                 // tweak in place, destructively
                 ((Particle) state.population.subpops.get(subpop).individuals.get(ind)).tweak(state, globalBest[subpop],
-                    velCoeff, personalCoeff, informantCoeff, globalCoeff, 0);
-            }
-                
-        // we return the same population
-        return state.population ;
+                        velCoeff, personalCoeff, informantCoeff, globalCoeff, 0);
         }
+
+        // we return the same population
+        return state.population;
     }
+}
 

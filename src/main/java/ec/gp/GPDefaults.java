@@ -6,12 +6,13 @@
 
 
 package ec.gp;
-import ec.util.Parameter;
-import ec.*;
 
-/* 
+import ec.DefaultsForm;
+import ec.util.Parameter;
+
+/*
  * GPDefaults.java
- * 
+ *
  * Created: Tue Oct 12 17:44:47 1999
  * By: Sean Luke
  */
@@ -22,16 +23,16 @@ import ec.*;
  * species basis.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public final class GPDefaults implements DefaultsForm
-    {
+public final class GPDefaults implements DefaultsForm {
     public static final String P_GP = "gp";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_GP);
-        }
     }
+}

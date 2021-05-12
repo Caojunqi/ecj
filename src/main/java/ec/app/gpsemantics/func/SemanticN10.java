@@ -6,9 +6,6 @@
 
 
 package ec.app.gpsemantics.func;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
 
 /*
  * SemanticN10.java
@@ -19,9 +16,13 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class SemanticN10 extends SemanticNode
-    {
-    public char value() { return 'N'; }
-    public int index() { return 10; }
-
+public class SemanticN10 extends SemanticNode {
+    public char value() {
+        return 'N';
     }
+
+    public int index() {
+        return 10;
+    }
+
+}

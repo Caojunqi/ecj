@@ -7,7 +7,7 @@
 
 /*
  * Created on Apr 19, 2005 10:30:19 PM
- * 
+ *
  * By: spaus
  */
 package ec.display;
@@ -15,23 +15,19 @@ package ec.display;
 /**
  * @author spaus
  */
-public class ParameterValue 
-    {
-    
+public class ParameterValue {
+
     final String value;
-    
-    public ParameterValue(String value) 
-        {
+
+    public ParameterValue(String value) {
         this.value = value;
-        }
-    
-    public String getValue() 
-        {
-        return value;
-        }
-    
-    public String toString() 
-        {
-        return "*"+value+"*";
-        }
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String toString() {
+        return "*" + value + "*";
+    }
+}

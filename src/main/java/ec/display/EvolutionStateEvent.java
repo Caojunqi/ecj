@@ -7,7 +7,7 @@
 
 /*
  * Created on Apr 14, 2005 9:11:13 PM
- * 
+ *
  * By: spaus
  */
 package ec.display;
@@ -18,14 +18,12 @@ import java.util.EventObject;
  * @author spaus
  */
 public class EvolutionStateEvent
-    extends EventObject 
-    {
+        extends EventObject {
 
     /**
      * @param source
      */
-    public EvolutionStateEvent(Object source) 
-        {
+    public EvolutionStateEvent(Object source) {
         super(source);
-        }
     }
+}

@@ -5,9 +5,6 @@
 */
 
 package ec.app.gpsemantics.func;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
 
 /*
  * SemanticJ.java
@@ -18,11 +15,20 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class SemanticJ extends SemanticNode
-    {
-    public String toString() { return "J"; }
-    public int expectedChildren() { return 2; }
-
-    public int index() { return -1; }
-    public char value() { return 'J'; }
+public class SemanticJ extends SemanticNode {
+    public String toString() {
+        return "J";
     }
+
+    public int expectedChildren() {
+        return 2;
+    }
+
+    public int index() {
+        return -1;
+    }
+
+    public char value() {
+        return 'J';
+    }
+}

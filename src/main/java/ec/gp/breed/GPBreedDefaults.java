@@ -6,13 +6,14 @@
 
 
 package ec.gp.breed;
+
+import ec.DefaultsForm;
 import ec.gp.GPDefaults;
 import ec.util.Parameter;
-import ec.*;
 
-/* 
+/*
  * GPBreedDefaults.java
- * 
+ *
  * Created: Tue Oct 12 17:44:47 1999
  * By: Sean Luke
  */
@@ -24,16 +25,16 @@ import ec.*;
  * species basis.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public final class GPBreedDefaults implements DefaultsForm
-    {
+public final class GPBreedDefaults implements DefaultsForm {
     public static final String P_BREED = "breed";
 
-    /** Returns the default base, which is built off of the GPDefaults base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base, which is built off of the GPDefaults base.
+     */
+    public static final Parameter base() {
         return GPDefaults.base().push(P_BREED);
-        }
     }
+}

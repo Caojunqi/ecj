@@ -6,11 +6,13 @@
 
 
 package ec.app.regression.func;
-import ec.*;
-import ec.app.regression.*;
-import ec.gp.*;
-import ec.util.*;
-import java.io.*;
+
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.regression.RegressionData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
 
 
 /* 
@@ -26,30 +28,31 @@ import java.io.*;
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class VladERCB extends VladERCA
-    {
-    public String name() { return "VladERCB"; }
+public class VladERCB extends VladERCA {
+    public String name() {
+        return "VladERCB";
+    }
 
-    public String toStringForHumans()
-        { return "n+" + value; }
+    public String toStringForHumans() {
+        return "n+" + value;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        RegressionData rd = ((RegressionData)(input));
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        RegressionData rd = ((RegressionData) (input));
 
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
         rd.x = rd.x + value;
-        }
-
     }
+
+}
 
 
 

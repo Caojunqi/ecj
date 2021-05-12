@@ -6,19 +6,22 @@
 
 
 package ec.util;
-import java.util.zip.*;
-import ec.*;
-import java.io.*;
 
-/* 
+import ec.EvolutionState;
+
+import java.io.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+/*
  * Checkpoint.java
- * 
+ *
  * Created: Tue Aug 10 22:39:19 1999
  * By: Sean Luke
  */
 
 /**
- * Checkpoints ec.EvolutionState objects out to checkpoint files, or 
+ * Checkpoints ec.EvolutionState objects out to checkpoint files, or
  * restores the same from checkpoint files.  Checkpoint take the following
  * form:
  *
@@ -38,69 +41,65 @@ import java.io.*;
  * @version 1.1
  */
 
-public class Checkpoint
-    {
+public class Checkpoint {
 
-    /** Writes the evolution state out to a file. */
+    /**
+     * Writes the evolution state out to a file.
+     */
 
-    public static void setCheckpoint(EvolutionState state)
-        {
-        try
-            {
+    public static void setCheckpoint(EvolutionState state) {
+        try {
             File file = new File("" + state.checkpointPrefix + "." + state.generation + ".gz");
-            
-            if (state.checkpointDirectory != null)
-                {
-                file = new File(state.checkpointDirectory, 
-                    "" + state.checkpointPrefix + "." + state.generation + ".gz");
-                }
-            ObjectOutputStream s = 
-                new ObjectOutputStream(
-                    new GZIPOutputStream (
-                        new BufferedOutputStream(
-                            new FileOutputStream(file))));
-                
+
+            if (state.checkpointDirectory != null) {
+                file = new File(state.checkpointDirectory,
+                        "" + state.checkpointPrefix + "." + state.generation + ".gz");
+            }
+            ObjectOutputStream s =
+                    new ObjectOutputStream(
+                            new GZIPOutputStream(
+                                    new BufferedOutputStream(
+                                            new FileOutputStream(file))));
+
             s.writeObject(state);
             s.close();
-            state.output.message("Wrote out checkpoint file " + 
-                state.checkpointPrefix + "." + 
-                state.generation + ".gz");
-            }
-        catch (IOException e)
-            {
-            state.output.warning("Unable to create the checkpoint file " + 
-                state.checkpointPrefix + "." +
-                state.generation + ".gz" + 
-                "because of an IOException:\n--EXCEPTION--\n" +
-                e + 
-                "\n--EXCEPTION-END--\n");
-            }
+            state.output.message("Wrote out checkpoint file " +
+                    state.checkpointPrefix + "." +
+                    state.generation + ".gz");
+        } catch (IOException e) {
+            state.output.warning("Unable to create the checkpoint file " +
+                    state.checkpointPrefix + "." +
+                    state.generation + ".gz" +
+                    "because of an IOException:\n--EXCEPTION--\n" +
+                    e +
+                    "\n--EXCEPTION-END--\n");
         }
+    }
 
 
-    /** Returns an EvolutionState object read from a checkpoint file
-        whose filename is <i>checkpoint</i> 
-        *
-        @exception java.lang.ClassNotFoundException thrown when the checkpoint file contains a class reference which doesn't exist in your class hierarchy.
-    **/
+    /**
+     * Returns an EvolutionState object read from a checkpoint file
+     * whose filename is <i>checkpoint</i>
+     *
+     * @throws java.lang.ClassNotFoundException thrown when the checkpoint file contains a class reference which doesn't exist in your class hierarchy.
+     **/
     public static EvolutionState restoreFromCheckpoint(String checkpoint)
-        throws IOException, ClassNotFoundException, OptionalDataException
-    /* must throw something if error -- NEVER return null */
-        { 
+            throws IOException, ClassNotFoundException, OptionalDataException
+    /* must throw something if error -- NEVER return null */ {
         // load from the file
-        ObjectInputStream s = 
-            new ObjectInputStream(
-                new GZIPInputStream (
-                    new BufferedInputStream (
-                        new FileInputStream (checkpoint))));
+        ObjectInputStream s =
+                new ObjectInputStream(
+                        new GZIPInputStream(
+                                new BufferedInputStream(
+                                        new FileInputStream(checkpoint))));
 
         EvolutionState e = (EvolutionState) s.readObject();
         s.close();
 
         // restart from the checkpoint
-    
+
         e.resetFromCheckpoint();
-        return e; 
-        }
+        return e;
     }
+}
 

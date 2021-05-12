@@ -1,11 +1,12 @@
 package ec.de;
 
-import ec.*;
-import ec.simple.*;
+import ec.EvolutionState;
+import ec.Population;
+import ec.simple.SimpleEvaluator;
 
-/* 
+/*
  * DEEvaluator.java
- * 
+ *
  * Created: Fri Aug 13 11:20:54 EDT 2010
  * By: Sean Luke
  */
@@ -23,34 +24,28 @@ import ec.simple.*;
  * <p>The full description of Differential Evolution may be found in the book
  * "Differential Evolution: A Practical Approach to Global Optimization"
  * by Kenneth Price, Rainer Storn, and Jouni Lampinen.
- * 
+ *
  * @author Sean Luke
  * @version 1.0
  */
 
-public class DEEvaluator extends SimpleEvaluator
-    {
-    public void evaluatePopulation(EvolutionState state)
-        {
+public class DEEvaluator extends SimpleEvaluator {
+    public void evaluatePopulation(EvolutionState state) {
         super.evaluatePopulation(state);
 
-        if( state.breeder instanceof DEBreeder )
-            {
-            Population previousPopulation = ((DEBreeder)(state.breeder)).previousPopulation; // for faster access
-            if( previousPopulation != null )
-                {
-                if( previousPopulation.subpops.size() != state.population.subpops.size())
-                    state.output.fatal( "DEEvaluator requires that the population have the same number of subpopulations every generation.");
-                for(int i = 0; i < previousPopulation.subpops.size(); i++ )
-                    {
-                    if( state.population.subpops.get(i).individuals.size() != previousPopulation.subpops.get(i).individuals.size() )
-                        state.output.fatal( "DEEvaluator requires that subpopulation " + i + " should have the same number of individuals in all generations." );
-                    for(int j = 0; j < state.population.subpops.get(i).individuals.size() ; j++ )
-                        if( previousPopulation.subpops.get(i).individuals.get(j).fitness.betterThan( state.population.subpops.get(i).individuals.get(j).fitness ) )
+        if (state.breeder instanceof DEBreeder) {
+            Population previousPopulation = ((DEBreeder) (state.breeder)).previousPopulation; // for faster access
+            if (previousPopulation != null) {
+                if (previousPopulation.subpops.size() != state.population.subpops.size())
+                    state.output.fatal("DEEvaluator requires that the population have the same number of subpopulations every generation.");
+                for (int i = 0; i < previousPopulation.subpops.size(); i++) {
+                    if (state.population.subpops.get(i).individuals.size() != previousPopulation.subpops.get(i).individuals.size())
+                        state.output.fatal("DEEvaluator requires that subpopulation " + i + " should have the same number of individuals in all generations.");
+                    for (int j = 0; j < state.population.subpops.get(i).individuals.size(); j++)
+                        if (previousPopulation.subpops.get(i).individuals.get(j).fitness.betterThan(state.population.subpops.get(i).individuals.get(j).fitness))
                             state.population.subpops.get(i).individuals.set(j, previousPopulation.subpops.get(i).individuals.get(j));
-                    }
                 }
             }
-        else state.output.fatal("DEEvaluator requires DEBreeder to be the breeder.");
-        }
+        } else state.output.fatal("DEEvaluator requires DEBreeder to be the breeder.");
     }
+}

@@ -6,13 +6,18 @@
 
 
 package ec.app.tutorial4;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
 
-public class Add extends GPNode
-    {
-    public String toString() { return "+"; }
+import ec.EvolutionState;
+import ec.Problem;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+public class Add extends GPNode {
+    public String toString() {
+        return "+";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -27,23 +32,24 @@ public class Add extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 2; }
+    public int expectedChildren() {
+        return 2;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
         double result;
-        DoubleData rd = ((DoubleData)(input));
+        DoubleData rd = ((DoubleData) (input));
 
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
         result = rd.x;
 
-        children[1].eval(state,thread,input,stack,individual,problem);
+        children[1].eval(state, thread, input, stack, individual, problem);
         rd.x = result + rd.x;
-        }
     }
+}
 

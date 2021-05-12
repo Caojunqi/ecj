@@ -6,13 +6,12 @@
 
 package ec.singlestate;
 
-import ec.simple.*;
+import ec.DefaultsForm;
 import ec.util.Parameter;
-import ec.*;
 
-/* 
+/*
  * SimpleDefaults.java
- * 
+ *
  * Created: Thu Jan 20 17:19:12 2000
  * By: Sean Luke
  */
@@ -22,13 +21,13 @@ import ec.*;
  * @version 1.0
  */
 
-public final class SingleStateDefaults implements DefaultsForm
-    {
+public final class SingleStateDefaults implements DefaultsForm {
     public static final String P_SINGLE = "single";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_SINGLE);
-        }
     }
+}

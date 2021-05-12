@@ -6,16 +6,22 @@
 
 
 package ec.app.multiplexerslow;
-import ec.util.*;
-import ec.*;
-import ec.gp.*;
-import ec.gp.koza.*;
-import ec.simple.*;
+
+import ec.EvolutionState;
+import ec.Fitness;
+import ec.Individual;
+import ec.gp.GPIndividual;
+import ec.gp.GPProblem;
+import ec.gp.koza.KozaFitness;
+import ec.simple.SimpleFitness;
+import ec.simple.SimpleProblemForm;
+import ec.util.Parameter;
+
 import java.util.ArrayList;
 
-/* 
+/*
  * Multiplexer.java
- * 
+ *
  * Created: Mon Nov  1 15:46:19 1999
  * By: Sean Luke
  */
@@ -23,28 +29,27 @@ import java.util.ArrayList;
 /**
  * Multiplexer implements the family of <i>n</i>-Multiplexer problems.
  *
- <p><b>Parameters</b><br>
- <table>
- <tr><td valign=top><i>base</i>.<tt>data</tt><br>
- <font size=-1>classname, inherits or == ec.app.multiplexer.MultiplexerData</font></td>
- <td valign=top>(the class for the prototypical GPData object for the Multiplexer problem)</td></tr>
- <tr><td valign=top><i>base</i>.<tt>bits</tt><br>
- <font size=-1>1, 2, or 3</font></td>
- <td valign=top>(The number of address bits (1 == 3-multiplexer, 2 == 6-multiplexer, 3==11-multiplexer)</td></tr>
- </table>
-
- <p><b>Parameter bases</b><br>
- <table>
- <tr><td valign=top><i>base</i>.<tt>data</tt></td>
- <td>species (the GPData object)</td></tr>
- </table>
+ * <p><b>Parameters</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>data</tt><br>
+ * <font size=-1>classname, inherits or == ec.app.multiplexer.MultiplexerData</font></td>
+ * <td valign=top>(the class for the prototypical GPData object for the Multiplexer problem)</td></tr>
+ * <tr><td valign=top><i>base</i>.<tt>bits</tt><br>
+ * <font size=-1>1, 2, or 3</font></td>
+ * <td valign=top>(The number of address bits (1 == 3-multiplexer, 2 == 6-multiplexer, 3==11-multiplexer)</td></tr>
+ * </table>
+ *
+ * <p><b>Parameter bases</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>data</tt></td>
+ * <td>species (the GPData object)</td></tr>
+ * </table>
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Multiplexer extends GPProblem implements SimpleProblemForm
-    {
+public class Multiplexer extends GPProblem implements SimpleProblemForm {
     private static final long serialVersionUID = 1;
 
     public static final int NUMINPUTS = 20;
@@ -57,74 +62,71 @@ public class Multiplexer extends GPProblem implements SimpleProblemForm
     public int dataPart;     // the current data part
 
     public void setup(final EvolutionState state,
-        final Parameter base)
-        {
+                      final Parameter base) {
         // very important, remember this
-        super.setup(state,base);
+        super.setup(state, base);
 
         // not using any default base -- it's not safe
 
         // verify our input is the right class (or subclasses from it)
         if (!(input instanceof MultiplexerData))
             state.output.fatal("GPData class must subclass from " + MultiplexerData.class,
-                base.push(P_DATA), null);
+                    base.push(P_DATA), null);
 
         // I figure 3 bits is plenty -- otherwise we'd be dealing with
         // REALLY big arrays!
-        bits = state.parameters.getIntWithMax(base.push(P_NUMBITS),null,1,3);
-        if (bits<1)
+        bits = state.parameters.getIntWithMax(base.push(P_NUMBITS), null, 1, 3);
+        if (bits < 1)
             state.output.fatal("The number of bits for Multiplexer must be between 1 and 3 inclusive");
-        
-        amax=1;
-        for(int x=0;x<bits;x++) amax *=2;   // safer than Math.pow(...)
 
-        dmax=1;
-        for(int x=0;x<amax;x++) dmax *=2;   // safer than Math.pow(...)
-        }
+        amax = 1;
+        for (int x = 0; x < bits; x++) amax *= 2;   // safer than Math.pow(...)
+
+        dmax = 1;
+        for (int x = 0; x < amax; x++) dmax *= 2;   // safer than Math.pow(...)
+    }
 
     @Override
-    public void evaluate(final EvolutionState state, 
-        final Individual ind, 
-        final int subpopulation,
-        final int threadnum)
-        {
+    public void evaluate(final EvolutionState state,
+                         final Individual ind,
+                         final int subpopulation,
+                         final int threadnum) {
         if (!ind.evaluated)  // don't bother reevaluating
-            {
-            MultiplexerData input = (MultiplexerData)(this.input);
-        
+        {
+            MultiplexerData input = (MultiplexerData) (this.input);
+
             int sum = 0;
-            
+
             // We'll record the individual trials in case we want to use LexicaseSelection
             final ArrayList<Fitness> trials = new ArrayList<Fitness>();
-            
-            for(addressPart = 0; addressPart < amax; addressPart++)
-                for(dataPart = 0; dataPart < dmax; dataPart++)
-                    {
-                    ((GPIndividual)ind).trees[0].child.eval(
-                        state,threadnum,input,stack,((GPIndividual)ind),this);
-                    final double trial = 1- (                  /* "Not" */
-                        ((dataPart >>> addressPart) & 1) /* extracts the address-th 
+
+            for (addressPart = 0; addressPart < amax; addressPart++)
+                for (dataPart = 0; dataPart < dmax; dataPart++) {
+                    ((GPIndividual) ind).trees[0].child.eval(
+                            state, threadnum, input, stack, ((GPIndividual) ind), this);
+                    final double trial = 1 - (                  /* "Not" */
+                            ((dataPart >>> addressPart) & 1) /* extracts the address-th
                                                             bit in data and moves 
                                                             it to position 0, 
                                                             clearing out all 
                                                             other bits */
-                        ^                   /* "Is Different from" */
-                        (input.x & 1));      /* A 1 if input.x is 
+                                    ^                   /* "Is Different from" */
+                                    (input.x & 1));      /* A 1 if input.x is
                                                 non-zero, else 0. */
-                    
+
                     final SimpleFitness trialFitness = new SimpleFitness();
                     trialFitness.setFitness(state, trial, false);
                     trials.add(trialFitness);
                     sum += trial;
-                    }
-                
+                }
+
             // the fitness better be KozaFitness!
-            KozaFitness f = ((KozaFitness)ind.fitness);
-            assert(trials.size() == amax*dmax);
+            KozaFitness f = ((KozaFitness) ind.fitness);
+            assert (trials.size() == amax * dmax);
             f.trials = trials;
-            f.setStandardizedFitness(state, (amax*dmax - sum));
+            f.setStandardizedFitness(state, (amax * dmax - sum));
             f.hits = sum;
             ind.evaluated = true;
-            }
         }
     }
+}

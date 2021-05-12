@@ -14,14 +14,14 @@ package ec.util;
 
 
 /**
- *
  * Thrown whenever a problem occurs when attempting to output to a Log.
  *
  * @author Sean Luke
  * @version 1.0
  */
 
-public class OutputException extends RuntimeException
-    {
-    public OutputException(String s) { super(s); }
+public class OutputException extends RuntimeException {
+    public OutputException(String s) {
+        super(s);
     }
+}

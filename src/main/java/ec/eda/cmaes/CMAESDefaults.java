@@ -7,12 +7,12 @@
 
 package ec.eda.cmaes;
 
-import ec.util.*;
-import ec.*;
+import ec.DefaultsForm;
+import ec.util.Parameter;
 
-/* 
+/*
  * CMAESDefaults.java
- * 
+ *
  * Created: Sun Jul  9 16:26:01 CEST 2017
  * By: Sean Luke
  */
@@ -21,16 +21,16 @@ import ec.*;
  * CMAESDefaults is the basic defaults class for the cmaes package.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public final class CMAESDefaults implements DefaultsForm
-    {
+public final class CMAESDefaults implements DefaultsForm {
     public static final String P_CMAES = "cmaes";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_CMAES);
-        }    
     }
+}

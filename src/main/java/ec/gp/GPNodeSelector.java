@@ -6,11 +6,13 @@
 
 
 package ec.gp;
-import ec.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Prototype;
+
+/*
  * GPNodeSelector.java
- * 
+ *
  * Created: Tue Oct 12 17:08:10 1999
  * By: Sean Luke
  */
@@ -27,26 +29,28 @@ import ec.*;
  * reset caches, etc.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public interface GPNodeSelector extends Prototype 
-    {
-    /** Picks a node at random from tree and returns it.   The tree
-        is located in ind, which is located in s.population[subpopulation].
-        This method will be preceded with a call to reset();
-        afterwards, pickNode(...) may be called several times for the
-        same tree.
-    */
+public interface GPNodeSelector extends Prototype {
+    /**
+     * Picks a node at random from tree and returns it.   The tree
+     * is located in ind, which is located in s.population[subpopulation].
+     * This method will be preceded with a call to reset();
+     * afterwards, pickNode(...) may be called several times for the
+     * same tree.
+     */
 
     public abstract GPNode pickNode(final EvolutionState s,
-        final int subpopulation,
-        final int thread,
-        final GPIndividual ind,
-        final GPTree tree);
+                                    final int subpopulation,
+                                    final int thread,
+                                    final GPIndividual ind,
+                                    final GPTree tree);
 
-    /** Resets the Node Selector before a new series of pickNode()
-        if need be. */
+    /**
+     * Resets the Node Selector before a new series of pickNode()
+     * if need be.
+     */
     public abstract void reset();
 
-    }
+}

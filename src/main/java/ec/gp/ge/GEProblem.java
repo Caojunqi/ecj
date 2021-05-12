@@ -5,12 +5,16 @@
 */
 package ec.gp.ge;
 
-import ec.*;
-import ec.gp.*;
-import ec.gp.koza.*;
-import ec.simple.*;
-import ec.coevolve.*;
-import ec.util.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Population;
+import ec.Problem;
+import ec.coevolve.GroupedProblemForm;
+import ec.gp.GPIndividual;
+import ec.gp.GPProblem;
+import ec.gp.koza.KozaFitness;
+import ec.simple.SimpleProblemForm;
+import ec.util.Parameter;
 
 /*
  * GEProblem.java
@@ -20,144 +24,126 @@ import ec.util.*;
  */
 
 /**
-   GEProblem is a special replacement for Problem which performs GE mapping.  You do not subclass
-   from GEProblem.  Rather, create a GPProblem subclass and set it to be the 'problem' parameter of the GEProblem.
-   The GEProblem will convert the GEIndividual into a GPIndividual, then pass this GPIndividual to the GPProblem
-   to be evaluated.
+ * GEProblem is a special replacement for Problem which performs GE mapping.  You do not subclass
+ * from GEProblem.  Rather, create a GPProblem subclass and set it to be the 'problem' parameter of the GEProblem.
+ * The GEProblem will convert the GEIndividual into a GPIndividual, then pass this GPIndividual to the GPProblem
+ * to be evaluated.
+ *
+ * <p>The procedure is as follows.  Let's say your GPProblem is the Artificial Ant problem.  Instead of saying...
+ *
+ * <p><tt>eval.problem = ec.app.ant.Ant<br>
+ * eval.problem = ec.app.ant.Ant<br>
+ * eval.problem.data = ec.app.ant.AntData<br>
+ * eval.problem.moves = 400<br>
+ * eval.problem.file = santafe.trl
+ * </tt>
+ *
+ * <p>... you instead make your problem a GEProblem like this:
+ *
+ * <p><tt>eval.problem = ec.gp.ge.GEProblem</tt>
+ *
+ * <p>... and then you hang the Ant problem, and all its subsidiary data, as the 'problem' parameter from the GEProblem like so:
+ *
+ * <p><tt>eval.problem.problem = ec.app.ant.Ant<br>
+ * eval.problem.problem.data = ec.app.ant.AntData<br>
+ * l.problem.problem.moves = 400<br>
+ * l.problem.problem.file = santafe.trl
+ * t>
+ * <p>
+ * Everything else should be handled for you.  GEProblem is also compatible with the MasterProblem procedure
+ * distributed evaluation, and is also both a SimpleProblemForm and a GroupedProblemForm.  We've got you covered.
+ *
+ * <b>Parameters</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>problem</tt><br>
+ * <font size=-1>classname, inherits from GPProblem</font></td>
+ * <td valign=top>(The GPProblem which actually performs the evaluation of the mapped GPIndividual)</td></tr>
+ * </table>
+ */
 
-   <p>The procedure is as follows.  Let's say your GPProblem is the Artificial Ant problem.  Instead of saying...
-
-   <p><tt>eval.problem = ec.app.ant.Ant<br>
-   eval.problem = ec.app.ant.Ant<br>
-   eval.problem.data = ec.app.ant.AntData<br>
-   eval.problem.moves = 400<br>
-   eval.problem.file = santafe.trl
-   </tt>
-
-   <p>... you instead make your problem a GEProblem like this:
-
-   <p><tt>eval.problem = ec.gp.ge.GEProblem</tt>
-
-   <p>... and then you hang the Ant problem, and all its subsidiary data, as the 'problem' parameter from the GEProblem like so:
-
-   <p><tt>eval.problem.problem = ec.app.ant.Ant<br>
-   eval.problem.problem.data = ec.app.ant.AntData<br>
-   eval.problem.problem.moves = 400<br>
-   eval.problem.problem.file = santafe.trl
-   </tt>
-
-   <p>Everything else should be handled for you.  GEProblem is also compatible with the MasterProblem procedure
-   for distributed evaluation, and is also both a SimpleProblemForm and a GroupedProblemForm.  We've got you covered.
-
-   <p><b>Parameters</b><br>
-   <table>
-   <tr><td valign=top><i>base</i>.<tt>problem</tt><br>
-   <font size=-1>classname, inherits from GPProblem</font></td>
-   <td valign=top>(The GPProblem which actually performs the evaluation of the mapped GPIndividual)</td></tr>
-   </table>
-*/
-
-public class GEProblem extends Problem implements SimpleProblemForm, GroupedProblemForm
-    {
+public class GEProblem extends Problem implements SimpleProblemForm, GroupedProblemForm {
     private static final long serialVersionUID = 1;
 
     public final static String P_PROBLEM = "problem";
     public GPProblem problem;
 
-    public void setup(EvolutionState state, Parameter base)
-        {
-        problem = (GPProblem)state.parameters.getInstanceForParameter(base.push(P_PROBLEM), null, GPProblem.class);
+    public void setup(EvolutionState state, Parameter base) {
+        problem = (GPProblem) state.parameters.getInstanceForParameter(base.push(P_PROBLEM), null, GPProblem.class);
         problem.setup(state, base.push(P_PROBLEM));
-        }
+    }
 
-    public Object clone()
-        {
-        GEProblem other = (GEProblem)(super.clone());
-        other.problem = (GPProblem)(problem.clone());
+    public Object clone() {
+        GEProblem other = (GEProblem) (super.clone());
+        other.problem = (GPProblem) (problem.clone());
         return other;
-        }
+    }
 
-    public void prepareToEvaluate(final EvolutionState state, final int threadnum)
-        {
+    public void prepareToEvaluate(final EvolutionState state, final int threadnum) {
         problem.prepareToEvaluate(state, threadnum);
-        }
+    }
 
-    public void finishEvaluating(final EvolutionState state, final int threadnum)
-        {
+    public void finishEvaluating(final EvolutionState state, final int threadnum) {
         problem.finishEvaluating(state, threadnum);
-        }
+    }
 
-    public void initializeContacts( EvolutionState state )
-        {
+    public void initializeContacts(EvolutionState state) {
         problem.initializeContacts(state);
-        }
+    }
 
-    public void reinitializeContacts( EvolutionState state )
-        {
+    public void reinitializeContacts(EvolutionState state) {
         problem.reinitializeContacts(state);
-        }
+    }
 
-    public void closeContacts(EvolutionState state, int result)
-        {
+    public void closeContacts(EvolutionState state, int result) {
         problem.closeContacts(state, result);
-        }
+    }
 
-    public boolean canEvaluate()
-        {
+    public boolean canEvaluate() {
         return problem.canEvaluate();
-        }
+    }
 
-    public void preprocessPopulation(final EvolutionState state, Population pop, final boolean[] prepareForFitnessAssessment, boolean countVictoriesOnly)
-        {
+    public void preprocessPopulation(final EvolutionState state, Population pop, final boolean[] prepareForFitnessAssessment, boolean countVictoriesOnly) {
         if (!(problem instanceof GroupedProblemForm))
             state.output.fatal("GEProblem's underlying Problem is not a GroupedProblemForm");
-        ((GroupedProblemForm)problem).preprocessPopulation(state, pop, prepareForFitnessAssessment, countVictoriesOnly);
-        }
+        ((GroupedProblemForm) problem).preprocessPopulation(state, pop, prepareForFitnessAssessment, countVictoriesOnly);
+    }
 
-    public int postprocessPopulation(final EvolutionState state, Population pop, boolean[] assessFitness, final boolean countVictoriesOnly)
-        {
-        return ((GroupedProblemForm)problem).postprocessPopulation(state, pop, assessFitness, countVictoriesOnly);
-        }
+    public int postprocessPopulation(final EvolutionState state, Population pop, boolean[] assessFitness, final boolean countVictoriesOnly) {
+        return ((GroupedProblemForm) problem).postprocessPopulation(state, pop, assessFitness, countVictoriesOnly);
+    }
 
-    /** Default version assumes that every individual is a GEIndividual.
-        The underlying problem.evaluate() must be prepared for the possibility that some
-        GPIndividuals handed it are in fact null, meaning that they couldn't be extracted
-        from the GEIndividual string.  You should assign them bad fitness in some appropriate way.
-    */
+    /**
+     * Default version assumes that every individual is a GEIndividual.
+     * The underlying problem.evaluate() must be prepared for the possibility that some
+     * GPIndividuals handed it are in fact null, meaning that they couldn't be extracted
+     * from the GEIndividual string.  You should assign them bad fitness in some appropriate way.
+     */
     public void evaluate(final EvolutionState state,
-        final Individual[] ind,  // the individuals to evaluate together
-        final boolean[] updateFitness,  // should this individuals' fitness be updated?
-        final boolean countVictoriesOnly, // don't bother updating Fitness with socres, just victories
-        final int[] subpops,
-        final int threadnum)
-        {
+                         final Individual[] ind,  // the individuals to evaluate together
+                         final boolean[] updateFitness,  // should this individuals' fitness be updated?
+                         final boolean countVictoriesOnly, // don't bother updating Fitness with socres, just victories
+                         final int[] subpops,
+                         final int threadnum) {
         // the default version assumes that every subpopulation is a GE Individual
         Individual[] gpi = new Individual[ind.length];
-        for(int i = 0; i < gpi.length; i++)
-            {
-            if (ind[i] instanceof GEIndividual)
-                {
+        for (int i = 0; i < gpi.length; i++) {
+            if (ind[i] instanceof GEIndividual) {
                 GEIndividual indiv = (GEIndividual) ind[i];
                 GESpecies species = (GESpecies) (ind[i].species);
 
                 // warning: gpi[i] may be null
                 gpi[i] = species.map(state, indiv, threadnum, null);
-                }
-            else if (ind[i] instanceof GPIndividual)
-                {
+            } else if (ind[i] instanceof GPIndividual) {
                 state.output.warnOnce("GPIndividual provided to GEProblem.  Hope that's correct.");
                 gpi[i] = ind[i];
-                }
-            else
-                {
+            } else {
                 state.output.fatal("Individual " + i + " passed to Grouped evaluate(...) was neither a GP nor GE Individual: " + ind[i]);
-                }
             }
+        }
 
-        ((GroupedProblemForm)problem).evaluate(state, gpi, updateFitness, countVictoriesOnly, subpops, threadnum);
+        ((GroupedProblemForm) problem).evaluate(state, gpi, updateFitness, countVictoriesOnly, subpops, threadnum);
 
-        for(int i = 0; i < gpi.length; i++)
-            {
+        for (int i = 0; i < gpi.length; i++) {
             // Now we need to move the evaluated flag from the GPIndividual
             // to the GEIndividual, and also for good measure, let's copy over
             // the GPIndividual's fitness because even though the mapping function
@@ -165,34 +151,29 @@ public class GEProblem extends Problem implements SimpleProblemForm, GroupedProb
             // that the evaluation function may have replaced the fitness.
             ind[i].fitness = gpi[i].fitness;  // if it's a GPIndividual anyway it'll just copy onto itself
             ind[i].evaluated = gpi[i].evaluated;  // if it's a GPIndividual anyway it'll just copy onto itself
-            }
         }
+    }
 
     public void evaluate(final EvolutionState state,
-        final Individual ind,
-        final int subpopulation,
-        final int threadnum)
-        {
+                         final Individual ind,
+                         final int subpopulation,
+                         final int threadnum) {
         // this shouldn't ever happen because GEProblem's Problems are ALWAYS
         // SimpleProblemForm, but we include it here to be future-proof
         if (!(problem instanceof SimpleProblemForm))
             state.output.fatal("GEProblem's underlying Problem is not a SimpleProblemForm");
 
-        if (ind instanceof GEIndividual)
-            {
+        if (ind instanceof GEIndividual) {
             GEIndividual indiv = (GEIndividual) ind;
             GESpecies species = (GESpecies) (ind.species);
             GPIndividual gpi = species.map(state, indiv, threadnum, null);
-            if (gpi == null)
-                {
+            if (gpi == null) {
                 KozaFitness fitness = (KozaFitness) (ind.fitness);
                 fitness.setStandardizedFitness(state, Double.MAX_VALUE);
-                ind.fitness = fitness ;
-                ind.evaluated = true ;
-                }
-            else
-                {
-                ((SimpleProblemForm)problem).evaluate(state, gpi, subpopulation, threadnum);
+                ind.fitness = fitness;
+                ind.evaluated = true;
+            } else {
+                ((SimpleProblemForm) problem).evaluate(state, gpi, subpopulation, threadnum);
                 // Now we need to move the evaluated flag from the GPIndividual
                 // to the GEIndividual, and also for good measure, let's copy over
                 // the GPIndividual's fitness because even though the mapping function
@@ -200,32 +181,25 @@ public class GEProblem extends Problem implements SimpleProblemForm, GroupedProb
                 // that the evaluation function may have replaced the fitness.
                 ind.fitness = gpi.fitness;
                 ind.evaluated = gpi.evaluated;
-                }
             }
-        else if (ind instanceof GPIndividual)
-            {
+        } else if (ind instanceof GPIndividual) {
             state.output.warnOnce("GPIndividual provided to GEProblem.  Hope that's correct.");
-            ((SimpleProblemForm)problem).evaluate(state, ind, subpopulation, threadnum);  // just evaluate directly
-            }
-        else
-            {
+            ((SimpleProblemForm) problem).evaluate(state, ind, subpopulation, threadnum);  // just evaluate directly
+        } else {
             state.output.fatal("Individual passed to evaluate(...) was neither a GP nor GE Individual: " + ind);
-            }
         }
+    }
 
     public void describe(final EvolutionState state,
-        final Individual ind,
-        final int subpopulation,
-        final int threadnum,
-        final int log)
-        {
-        if (ind instanceof GEIndividual)
-            {
+                         final Individual ind,
+                         final int subpopulation,
+                         final int threadnum,
+                         final int log) {
+        if (ind instanceof GEIndividual) {
             GEIndividual indiv = (GEIndividual) ind;
             GESpecies species = (GESpecies) (ind.species);
             GPIndividual gpi = species.map(state, indiv, threadnum, null);
-            if (gpi != null)
-                {
+            if (gpi != null) {
                 problem.describe(state, gpi, subpopulation, threadnum, log);
 
                 // though this is probably not necessary for describe(...),
@@ -233,16 +207,12 @@ public class GEProblem extends Problem implements SimpleProblemForm, GroupedProb
                 // did for evaluate(...) above.
                 ind.fitness = gpi.fitness;
                 ind.evaluated = gpi.evaluated;
-                }
             }
-        else if (ind instanceof GPIndividual)
-            {
+        } else if (ind instanceof GPIndividual) {
             state.output.warnOnce("GPIndividual provided to GEProblem.  Hope that's correct.");
-            ((SimpleProblemForm)problem).describe(state, ind, subpopulation, threadnum, log);  // just describe directly
-            }
-        else
-            {
+            ((SimpleProblemForm) problem).describe(state, ind, subpopulation, threadnum, log);  // just describe directly
+        } else {
             state.output.fatal("Individual passed to describe(...) was neither a GP nor GE Individual: " + ind);
-            }
         }
     }
+}

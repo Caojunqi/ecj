@@ -6,18 +6,21 @@
 
 
 package ec.app.push;
-import ec.gp.push.*;
-import org.spiderland.Psh.*;
-import ec.util.*;
-import ec.*;
-import ec.gp.*;
-import ec.gp.koza.*;
-import ec.simple.*;
-import java.io.*;
-import java.util.*;
 
-public class Regression extends PushProblem implements SimpleProblemForm
-    {
+import ec.EvolutionState;
+import ec.Individual;
+import ec.gp.GPIndividual;
+import ec.gp.koza.KozaFitness;
+import ec.gp.push.PushProblem;
+import ec.simple.SimpleProblemForm;
+import ec.util.Parameter;
+import org.spiderland.Psh.Interpreter;
+import org.spiderland.Psh.Program;
+
+import java.io.InputStream;
+import java.util.Scanner;
+
+public class Regression extends PushProblem implements SimpleProblemForm {
     private static final long serialVersionUID = 1;
 
     public static final String P_SIZE = "size";
@@ -27,25 +30,26 @@ public class Regression extends PushProblem implements SimpleProblemForm
 
     public int trainingSetSize;
     public boolean useFunction;  // if we have a file, should we use the function to compute the output values?  Or are they also contained?
-    
+
     // these are read-only during evaluation-time, so
     // they can be just light-cloned and not deep cloned.
     // cool, huh?
-    
+
     public double inputs[];
     public double outputs[];
 
-    public double func(double x)
-        { return x*x*x*x + x*x*x + x*x + x; }
+    public double func(double x) {
+        return x * x * x * x + x * x * x + x * x + x;
+    }
 
     public void setup(final EvolutionState state,
-        final Parameter base)
-        {
+                      final Parameter base) {
         // very important, remember this
-        super.setup(state,base);
+        super.setup(state, base);
 
-        trainingSetSize = state.parameters.getInt(base.push(P_SIZE),null,1);
-        if (trainingSetSize<1) state.output.fatal("Training Set Size must be an integer greater than 0", base.push(P_SIZE)); 
+        trainingSetSize = state.parameters.getInt(base.push(P_SIZE), null, 1);
+        if (trainingSetSize < 1)
+            state.output.fatal("Training Set Size must be an integer greater than 0", base.push(P_SIZE));
 
         // should we load our x parameters from a file, or generate them randomly?
         //file = state.parameters.getFile(base.push(P_FILE), null);
@@ -57,78 +61,69 @@ public class Regression extends PushProblem implements SimpleProblemForm
         // Compute our inputs so they can be copied with clone later
         inputs = new double[trainingSetSize];
         outputs = new double[trainingSetSize];
-        
+
         //if (file != null)  // use the file
-        if (inputfile != null)
-            {
-            try
-                {
+        if (inputfile != null) {
+            try {
                 Scanner scan = new Scanner(inputfile);
-                for(int x = 0; x < trainingSetSize; x++)
-                    {
+                for (int x = 0; x < trainingSetSize; x++) {
                     if (scan.hasNextDouble())
                         inputs[x] = scan.nextDouble();
-                    else state.output.fatal("Not enough data points in file: expected " + (trainingSetSize * (useFunction ? 1 : 2)));
-                    if (!useFunction)
-                        {
+                    else
+                        state.output.fatal("Not enough data points in file: expected " + (trainingSetSize * (useFunction ? 1 : 2)));
+                    if (!useFunction) {
                         if (scan.hasNextDouble())
                             outputs[x] = scan.nextDouble();
-                        else state.output.fatal("Not enough data points in file: expected " + (trainingSetSize * (useFunction ? 1 : 2)));
-                        }
+                        else
+                            state.output.fatal("Not enough data points in file: expected " + (trainingSetSize * (useFunction ? 1 : 2)));
                     }
                 }
-            catch (NumberFormatException e)
-                {
+            } catch (NumberFormatException e) {
                 state.output.fatal("Some tokens in the file were not numbers.");
-                }
             }
-        else for(int x=0;x<trainingSetSize;x++)
-                 {
-                 // On p. 242 of Koza-I, he claims that the points are chosen from the
-                 // fully-closed interval [-1, 1].  This is likely not true as Koza's lisp
-                 // code usually selected stuff from half-open intervals.  But just to be
-                 // absurdly exact here, we're allowing 1 as a valid number.
-                 inputs[x] = state.random[0].nextDouble(true, true) * 2.0 - 1.0;     // fully closed interval.
-                 }
-                        
-        for(int x=0;x<trainingSetSize;x++)
-            {
+        } else for (int x = 0; x < trainingSetSize; x++) {
+            // On p. 242 of Koza-I, he claims that the points are chosen from the
+            // fully-closed interval [-1, 1].  This is likely not true as Koza's lisp
+            // code usually selected stuff from half-open intervals.  But just to be
+            // absurdly exact here, we're allowing 1 as a valid number.
+            inputs[x] = state.random[0].nextDouble(true, true) * 2.0 - 1.0;     // fully closed interval.
+        }
+
+        for (int x = 0; x < trainingSetSize; x++) {
             if (useFunction)
                 outputs[x] = func(inputs[x]);
             state.output.message("{" + inputs[x] + "," + outputs[x] + "},");
-            }
+        }
 
-        maxSteps = state.parameters.getInt(base.push(P_MAX_STEPS),null,0);
+        maxSteps = state.parameters.getInt(base.push(P_MAX_STEPS), null, 0);
         if (maxSteps < 0)
             state.output.fatal("Maximum Steps not specified, must be 1 or greater, or 0 to indicate no maximum number of steps.");
         if (maxSteps == 0)
             state.output.warning("No maximum number of steps:. Push interpreter may get into an infinite loop.");
-        }
+    }
 
 
     public int maxSteps;
-    
-    public void evaluate(final EvolutionState state, 
-        final Individual ind, 
-        final int subpopulation,
-        final int threadnum)
-        {
+
+    public void evaluate(final EvolutionState state,
+                         final Individual ind,
+                         final int subpopulation,
+                         final int threadnum) {
         if (!ind.evaluated)  // don't bother reevaluating
-            {
+        {
             int hits = 0;
             double sum = 0.0;
             double result;
-        
-            Interpreter interpreter = getInterpreter(state, (GPIndividual) ind, threadnum);
-            Program program = getProgram(state, (GPIndividual) ind);        
 
-            for (int y=0;y<trainingSetSize;y++)
-                {
+            Interpreter interpreter = getInterpreter(state, (GPIndividual) ind, threadnum);
+            Program program = getProgram(state, (GPIndividual) ind);
+
+            for (int y = 0; y < trainingSetSize; y++) {
                 if (y > 0) // need to reset first
                     resetInterpreter(interpreter);
-                
+
                 // load it up and run it
-                pushOntoFloatStack(interpreter, (float)(inputs[y]));
+                pushOntoFloatStack(interpreter, (float) (inputs[y]));
                 executeProgram(program, interpreter, maxSteps);
 
                 // It's possible to get NaN because cos(infinity) and
@@ -144,29 +139,29 @@ public class Regression extends PushProblem implements SimpleProblemForm
 
                 result = Math.abs(outputs[y] - topOfFloatStack(interpreter));  // will be 0 if float stack is empty
 
-                if (! (result < BIG_NUMBER ) )   // *NOT* (input.x >= BIG_NUMBER)
+                if (!(result < BIG_NUMBER))   // *NOT* (input.x >= BIG_NUMBER)
                     result = BIG_NUMBER;
 
                 if (isFloatStackEmpty(interpreter)) // uh oh, invalid value
                     result = BIG_NUMBER;
 
-                // very slight math errors can creep in when evaluating
-                // two equivalent by differently-ordered functions, like
-                // x * (x*x*x + x*x)  vs. x*x*x*x + x*x
+                    // very slight math errors can creep in when evaluating
+                    // two equivalent by differently-ordered functions, like
+                    // x * (x*x*x + x*x)  vs. x*x*x*x + x*x
 
-                else if (result<PROBABLY_ZERO)  // slightly off
+                else if (result < PROBABLY_ZERO)  // slightly off
                     result = 0.0;
-                    
+
                 if (result <= HIT_LEVEL) hits++;  // whatever!
 
-                sum += result;              
-                }
-                
+                sum += result;
+            }
+
             // the fitness better be KozaFitness!
-            KozaFitness f = ((KozaFitness)ind.fitness);
+            KozaFitness f = ((KozaFitness) ind.fitness);
             f.setStandardizedFitness(state, sum);
             f.hits = hits;
             ind.evaluated = true;
-            }
         }
     }
+}

@@ -6,17 +6,15 @@
 package ec.co.ant;
 
 import ec.EvolutionState;
-import ec.Individual;
-import ec.Subpopulation;
 import ec.co.Component;
 import ec.co.ConstructiveIndividual;
 import ec.util.Parameter;
-import java.util.Arrays;
+
 import java.util.List;
 
 /**
  * A "local" pheromone decay rule in the style of Ant Colony System.
- *
+ * <p>
  * ACS uses this rule to decay pheromones as soon as they are visited.  The intention is to encourage diversification
  * within the same generation, so that ants are less likely to visit identical paths at the same time.
  *
@@ -29,43 +27,43 @@ public class ACSLocalUpdateRule implements UpdateRule {
     private double rho;
     private double minimumPheromone;
 
-    public double getMinimumPheromone() { return minimumPheromone; }
+    public double getMinimumPheromone() {
+        return minimumPheromone;
+    }
 
-    public double getRho() { return rho; }
+    public double getRho() {
+        return rho;
+    }
 
     @Override
-    public void setup(final EvolutionState state, final Parameter base)
-    {
-        assert(state != null);
-        assert(base != null);
+    public void setup(final EvolutionState state, final Parameter base) {
+        assert (state != null);
+        assert (base != null);
         rho = state.parameters.getDouble(base.push(P_RHO), null, 0.0);
         minimumPheromone = state.parameters.getDouble(base.push(P_RHO), null, 0.0);
-        assert(repOK());
+        assert (repOK());
     }
 
     @Override
     public void updatePheromones(final EvolutionState state, final PheromoneTable pheromones, final List individuals) {
-        assert(pheromones != null);
-        assert(individuals != null);
-        assert(!individuals.isEmpty());
+        assert (pheromones != null);
+        assert (individuals != null);
+        assert (!individuals.isEmpty());
 
-        for (final Object ind : individuals)
-        {
-            for (final Object oo : (ConstructiveIndividual)ind)
-            {
-                assert(oo instanceof Component);
+        for (final Object ind : individuals) {
+            for (final Object oo : (ConstructiveIndividual) ind) {
+                assert (oo instanceof Component);
                 final Component c = (Component) oo;
 
                 final double oldPheromone = pheromones.get(state, c, 0); // Using thread 0 because we are in a single-threaded function
-                pheromones.set(c, (1-rho)*oldPheromone + rho*minimumPheromone);
+                pheromones.set(c, (1 - rho) * oldPheromone + rho * minimumPheromone);
             }
         }
 
-        assert(repOK());
+        assert (repOK());
     }
 
-    public final boolean repOK()
-    {
+    public final boolean repOK() {
         return P_RHO != null
                 && !P_RHO.isEmpty()
                 && !Double.isInfinite(rho)

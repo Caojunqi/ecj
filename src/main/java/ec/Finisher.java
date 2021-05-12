@@ -7,9 +7,9 @@
 
 package ec;
 
-/* 
+/*
  * Finisher.java
- * 
+ *
  * Created: Tue Aug 10 21:09:18 1999
  * By: Sean Luke
  */
@@ -21,11 +21,12 @@ package ec;
  * contacts have been closed.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public abstract class Finisher implements Singleton
-    {
-    /** Cleans up the population after the run has completed. result is either ec.EvolutionState.R_SUCCESS or ec.EvolutionState.R_FAILURE, indicating whether or not an ideal individual was found. */
+public abstract class Finisher implements Singleton {
+    /**
+     * Cleans up the population after the run has completed. result is either ec.EvolutionState.R_SUCCESS or ec.EvolutionState.R_FAILURE, indicating whether or not an ideal individual was found.
+     */
     public abstract void finishPopulation(EvolutionState state, int result);
-    }
+}

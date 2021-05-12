@@ -6,26 +6,32 @@
 
 
 package ec.app.edge.func;
-import ec.*;
-import ec.app.edge.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.edge.Edge;
+import ec.app.edge.EdgeData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Reverse.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Reverse extends GPNode
-    {
-    public String toString() { return "reverse"; }
+public class Reverse extends GPNode {
+    public String toString() {
+        return "reverse";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,27 +46,28 @@ public class Reverse extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 1; }
+    public int expectedChildren() {
+        return 1;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        int edge = ((EdgeData)(input)).edge;
-        Edge prob = (Edge)problem;
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        int edge = ((EdgeData) (input)).edge;
+        Edge prob = (Edge) problem;
 
         int swap = prob.from[edge];
         prob.from[edge] = prob.to[edge];
         prob.to[edge] = swap;
-        
+
         // pass the edge down
 
-        children[0].eval(state,thread,input,stack,individual,problem);
-        }
+        children[0].eval(state, thread, input, stack, individual, problem);
     }
+}
 
 
 

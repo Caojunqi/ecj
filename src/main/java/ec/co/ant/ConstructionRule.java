@@ -11,12 +11,11 @@ import ec.co.ConstructiveIndividual;
 
 /**
  * Defines a rule for constructing ants based on pheromone values.
- *
+ * <p>
  * Contrast to <code>ec.co.grasp.ConstructionRule</code>, which doesn't take pheromones into account.
  *
  * @author Eric O. Scott
  */
-public interface ConstructionRule extends Setup
-{
+public interface ConstructionRule extends Setup {
     public abstract ConstructiveIndividual constructSolution(EvolutionState state, ConstructiveIndividual ind, PheromoneTable pheromones, int thread);
 }

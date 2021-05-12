@@ -6,9 +6,6 @@
 
 
 package ec.app.gpsemantics.func;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
 
 /*
  * SemanticX7.java
@@ -19,8 +16,12 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class SemanticX7 extends SemanticNode
-    {
-    public char value() { return 'X'; }
-    public int index() { return 7; }
+public class SemanticX7 extends SemanticNode {
+    public char value() {
+        return 'X';
     }
+
+    public int index() {
+        return 7;
+    }
+}

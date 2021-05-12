@@ -6,26 +6,32 @@
 
 
 package ec.app.multiplexerslow.func;
-import ec.*;
-import ec.app.multiplexerslow.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.multiplexerslow.Multiplexer;
+import ec.app.multiplexerslow.MultiplexerData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * D2.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class D2 extends GPNode
-    {
-    public String toString() { return "d2"; }
+public class D2 extends GPNode {
+    public String toString() {
+        return "d2";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,19 +46,20 @@ public class D2 extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        ((MultiplexerData)input).x = 
-            ((((Multiplexer)problem).dataPart >>> 2 ) & 1);
-        }
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        ((MultiplexerData) input).x =
+                ((((Multiplexer) problem).dataPart >>> 2) & 1);
     }
+}
 
 
 

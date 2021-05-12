@@ -6,27 +6,32 @@
 
 
 package ec.app.ant.func;
-import ec.*;
-import ec.app.ant.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.ant.Ant;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Right.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
 
-public class Right extends GPNode implements EvalPrint
-    {
-    public String toString() { return "right"; }
+public class Right extends GPNode implements EvalPrint {
+    public String toString() {
+        return "right";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -41,20 +46,20 @@ public class Right extends GPNode implements EvalPrint
       individualBase);
       }
     */
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        Ant p = (Ant)problem;
-        switch (p.orientation)
-            {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        Ant p = (Ant) problem;
+        switch (p.orientation) {
             case Ant.O_UP:
-                p.orientation = Ant.O_RIGHT; 
+                p.orientation = Ant.O_RIGHT;
                 break;
             case Ant.O_LEFT:
                 p.orientation = Ant.O_UP;
@@ -68,21 +73,20 @@ public class Right extends GPNode implements EvalPrint
             default:  // whoa!
                 state.output.fatal("Whoa, somehow I got a bad orientation! (" + p.orientation + ")");
                 break;
-            }
-        p.moves++;
         }
+        p.moves++;
+    }
 
     public void evalPrint(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem,
-        final int[][] map2)
-        {
-        eval(state,thread,input,stack,individual,problem);
-        }
+                          final int thread,
+                          final GPData input,
+                          final ADFStack stack,
+                          final GPIndividual individual,
+                          final Problem problem,
+                          final int[][] map2) {
+        eval(state, thread, input, stack, individual, problem);
     }
+}
 
 
 

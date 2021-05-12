@@ -6,26 +6,32 @@
 
 
 package ec.app.regression.func;
-import ec.*;
-import ec.app.regression.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.regression.Benchmarks;
+import ec.app.regression.RegressionData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * X.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class X4 extends GPNode
-    {
-    public String toString() { return "x4"; }
+public class X4 extends GPNode {
+    public String toString() {
+        return "x4";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,22 +46,23 @@ public class X4 extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        RegressionData rd = ((RegressionData)(input));
-        double[] c = ((Benchmarks)problem).currentValue;
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        RegressionData rd = ((RegressionData) (input));
+        double[] c = ((Benchmarks) problem).currentValue;
         if (c.length >= 4)
-            rd.x = ((Benchmarks)problem).currentValue[3];
+            rd.x = ((Benchmarks) problem).currentValue[3];
         else rd.x = 0;
-        }
     }
+}
 
 
 

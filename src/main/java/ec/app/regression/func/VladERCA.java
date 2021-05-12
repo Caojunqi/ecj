@@ -6,11 +6,13 @@
 
 
 package ec.app.regression.func;
-import ec.*;
-import ec.app.regression.*;
-import ec.gp.*;
-import ec.util.*;
-import java.io.*;
+
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.regression.RegressionData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
 
 
 /* 
@@ -27,36 +29,39 @@ import java.io.*;
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class VladERCA extends RegERC
-    {
-    public String name() { return "VladERCA"; }
-    public int expectedChildren() { return 1; }
+public class VladERCA extends RegERC {
+    public String name() {
+        return "VladERCA";
+    }
 
-    public void resetNode(final EvolutionState state, final int thread)
-        {
+    public int expectedChildren() {
+        return 1;
+    }
+
+    public void resetNode(final EvolutionState state, final int thread) {
         value = state.random[thread].nextDouble(true, true) * 5.0;
-        }
+    }
 
-    public String toStringForHumans()
-        { return "n^" + value; }
+    public String toStringForHumans() {
+        return "n^" + value;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        RegressionData rd = ((RegressionData)(input));
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        RegressionData rd = ((RegressionData) (input));
 
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
         rd.x = Math.pow(rd.x, value);
-        }
-
     }
+
+}
 
 
 

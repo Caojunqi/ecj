@@ -6,9 +6,6 @@
 
 
 package ec.app.ordertree.func;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
 
 /*
  * OrderTreeT4.java
@@ -19,9 +16,13 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class OrderTreeT4 extends OrderTreeNode
-    {
-    public int value() { return 4; }
-    public int expectedChildren() { return 0; }
+public class OrderTreeT4 extends OrderTreeNode {
+    public int value() {
+        return 4;
     }
+
+    public int expectedChildren() {
+        return 0;
+    }
+}
 

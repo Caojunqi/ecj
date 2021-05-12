@@ -6,11 +6,8 @@
 
 
 package ec.app.regression.func;
-import ec.*;
-import ec.app.regression.*;
-import ec.gp.*;
-import ec.util.*;
-import java.io.*;
+
+import ec.EvolutionState;
 
 
 /* 
@@ -26,21 +23,21 @@ import java.io.*;
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class KeijzerERC extends RegERC
-    {
+public class KeijzerERC extends RegERC {
     public static final double MEAN = 0.0;
     public static final double STANDARD_DEVIATION = 5.0;
-    
-    public String name() { return "KeijzerERC"; }
 
-    public void resetNode(final EvolutionState state, final int thread)
-        { 
-        value = MEAN + state.random[thread].nextGaussian() * STANDARD_DEVIATION; 
-        }
+    public String name() {
+        return "KeijzerERC";
     }
+
+    public void resetNode(final EvolutionState state, final int thread) {
+        value = MEAN + state.random[thread].nextGaussian() * STANDARD_DEVIATION;
+    }
+}
 
 
 

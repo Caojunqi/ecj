@@ -6,25 +6,26 @@
 
 
 package ec.app.twobox;
-import ec.gp.*;
 
-/* 
+import ec.gp.GPData;
+
+/*
  * TwoBoxData.java
- * 
+ *
  * Created: Wed Nov  3 18:32:13 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class TwoBoxData extends GPData
-    {
+public class TwoBoxData extends GPData {
     // return value
     public double x;
 
-    public void copyTo(final GPData gpd) 
-        { ((TwoBoxData)gpd).x = x; }
+    public void copyTo(final GPData gpd) {
+        ((TwoBoxData) gpd).x = x;
     }
+}

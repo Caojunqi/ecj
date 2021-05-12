@@ -14,14 +14,14 @@ package ec.util;
 
 
 /**
- *
  * Thrown when you attempt to create a Parameter from bad path items.
  *
  * @author Sean Luke
  * @version 1.0
  */
 
-public class BadParameterException extends RuntimeException
-    {
-    public BadParameterException(String s) { super("\n"+s); }
+public class BadParameterException extends RuntimeException {
+    public BadParameterException(String s) {
+        super("\n" + s);
     }
+}

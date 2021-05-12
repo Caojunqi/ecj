@@ -7,9 +7,9 @@
 
 package ec.steadystate;
 
-/* 
+/*
  * SteadyStateExchangerForm
- * 
+ *
  * Created: Tue Aug 10 21:59:17 1999
  * By: Sean Luke
  */
@@ -22,10 +22,10 @@ package ec.steadystate;
  * you modify or replace any individuals in a subpopulation.  Also,
  * realize that any individuals you exchange in will not be checked
  * to see if they're the ideal individual
+ *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public interface SteadyStateExchangerForm
-    {
-    }
+public interface SteadyStateExchangerForm {
+}

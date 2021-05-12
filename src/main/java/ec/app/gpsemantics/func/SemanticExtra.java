@@ -6,9 +6,6 @@
 
 
 package ec.app.gpsemantics.func;
-import ec.*;
-import ec.gp.*;
-import ec.util.*;
 
 /*
  * SemanticNode.java
@@ -19,11 +16,20 @@ import ec.util.*;
  * @author James McDermott
  */
 
-public class SemanticExtra extends SemanticNode
-    {
+public class SemanticExtra extends SemanticNode {
     char value;
     int index;
-    public SemanticExtra(char v, int i) { value = v; index = i; }
-    public char value() { return value; }
-    public int index() { return index; }
+
+    public SemanticExtra(char v, int i) {
+        value = v;
+        index = i;
     }
+
+    public char value() {
+        return value;
+    }
+
+    public int index() {
+        return index;
+    }
+}

@@ -6,12 +6,13 @@
 
 
 package ec.rule;
-import ec.util.Parameter;
-import ec.*;
 
-/* 
+import ec.DefaultsForm;
+import ec.util.Parameter;
+
+/*
  * RuleDefaults.java
- * 
+ *
  * Created: Tue Feb 20 1258:00 2001
  * By: Liviu Panait
  */
@@ -22,16 +23,16 @@ import ec.*;
  * species basis.
  *
  * @author Liviu Panait
- * @version 1.0 
+ * @version 1.0
  */
 
-public final class RuleDefaults implements DefaultsForm
-    {
+public final class RuleDefaults implements DefaultsForm {
     public static final String P_RULE = "rule";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_RULE);
-        }
     }
+}

@@ -6,28 +6,33 @@
 
 
 package ec.app.regression.func;
-import ec.*;
-import ec.app.regression.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.regression.RegressionData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Log.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Log extends GPNode
-    {
+public class Log extends GPNode {
     private static final long serialVersionUID = 1;
 
-    public String toString() { return "rlog"; }
+    public String toString() {
+        return "rlog";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -42,21 +47,22 @@ public class Log extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 1; }
+    public int expectedChildren() {
+        return 1;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        RegressionData rd = ((RegressionData)(input));
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        RegressionData rd = ((RegressionData) (input));
 
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
         rd.x = (rd.x == 0.0 ? 0.0 : /*Strict*/Math.log(/*Strict*/Math.abs(rd.x)));
-        }
     }
+}
 
 
 

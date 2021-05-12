@@ -6,13 +6,17 @@
 
 
 package ec.gp;
-import ec.*;
-import ec.util.*;
-import java.io.*;
 
-/* 
+import ec.EvolutionState;
+import ec.util.DecodeReturn;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+/*
  * ERC.java
- * 
+ *
  * Created: Mon Oct 25 18:22:15 1999
  * By: Sean Luke
  */
@@ -25,7 +29,7 @@ import java.io.*;
  * In order to implement an ERC, you need to override several methods below.
  *
  * <h2>Impementing an ERC</h2>
- *
+ * <p>
  * A basic no-frills ERC needs to have the following things:
  *
  * <ul>
@@ -37,7 +41,7 @@ import java.io.*;
  *     (like an int or a string), you don't need write a clone() method;
  *     the default one works fine.  But if your data is an array or other
  *     mutable object, you'll need to override the clone() method to copy
- *     the array.  
+ *     the array.
  *
  * <li>An implementation of the <b>resetNode</b> method to randomize the
  *     data once cloned from the prototype.  This essentially "initializes"
@@ -46,7 +50,7 @@ import java.io.*;
  * <li>An implementation of the <b>encode</b> method which presents the
  *     ERC as a String.  If you don't plan on writing individuals out to
  *     files in a fashion that enables them to be read back in again later,
- *     but only care to print out individuals for statistics purposes, 
+ *     but only care to print out individuals for statistics purposes,
  *     you can implement this to just
  *     write <tt>"" + <i>value</i></tt>, where <i>value</i> is your data.
  *
@@ -56,14 +60,14 @@ import java.io.*;
  *
  *
  * </ul>
- * 
+ * <p>
  * A more advanced ERC will need some of the following gizmos:
- * 
+ *
  * <ul>
  *
  * <li>If you have ERCs of different class types (for example, a vector ERC
  *      and a floating-point scalar ERC), you will wish to distinguish them
- *      when they're printed to files.  To do this,  override the <b>name</b> 
+ *      when they're printed to files.  To do this,  override the <b>name</b>
  *      method to return different strings for each of them (perhaps "vec" versus "").
  *
  * <li>If you want to write your ERCs to files such that they can be read
@@ -83,7 +87,7 @@ import java.io.*;
  *     you may wish to override the <b>mutateERC</b> method to do something
  *     more subtle than its default setting (which just randomizes the
  *     ERC again, by calling resetNode).
- * 
+ *
  * <li>The default <b>nodeHashCode</b> implementation is poor and slow (it
  *     creates a string using encode() and then hashes the sting).  You might
  *     create a better (and probably simpler) hash code function.
@@ -101,89 +105,115 @@ import java.io.*;
  * ERC.  A slightly more complicated example can be found in <b>ec.app.lawnmower.func.LawnERC</b>.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public abstract class ERC extends GPNode
-    {
-    /** Returns the lowercase "name" of this ERC function class, some
-        simple, short name which distinguishes this class from other ERC
-        function classes you're using.  If you have more than one ERC function,
-        you need to distinguish them here.  By default the value is "ERC",
-        which works fine for a single ERC function in the function set.
-        Whatever the name is, it should
-        generally only have letters, numbers, or hyphens or underscores in it.
-        No whitespace or other characters. */
-    public String name() { return "ERC"; }
+public abstract class ERC extends GPNode {
+    /**
+     * Returns the lowercase "name" of this ERC function class, some
+     * simple, short name which distinguishes this class from other ERC
+     * function classes you're using.  If you have more than one ERC function,
+     * you need to distinguish them here.  By default the value is "ERC",
+     * which works fine for a single ERC function in the function set.
+     * Whatever the name is, it should
+     * generally only have letters, numbers, or hyphens or underscores in it.
+     * No whitespace or other characters.
+     */
+    public String name() {
+        return "ERC";
+    }
 
-    /** Usually ERCs don't have children, and this default implementation makes certain of it. 
-        But if you want to override this, you're welcome to. */
-    public int expectedChildren() { return 0; }
+    /**
+     * Usually ERCs don't have children, and this default implementation makes certain of it.
+     * But if you want to override this, you're welcome to.
+     */
+    public int expectedChildren() {
+        return 0;
+    }
 
-    /** Remember to override this to randomize your ERC after it has been cloned.  The prototype will not ever receive this method call. */
+    /**
+     * Remember to override this to randomize your ERC after it has been cloned.  The prototype will not ever receive this method call.
+     */
     public abstract void resetNode(final EvolutionState state, int thread);
 
-    /** Implement this to do ERC-to-ERC comparisons. */
+    /**
+     * Implement this to do ERC-to-ERC comparisons.
+     */
     public abstract boolean nodeEquals(final GPNode node);
 
-    /** Implement this to hash ERCs, along with other nodes, in such a way that two
-        "equal" ERCs will usually hash to the same value. The default value, which 
-        may not be very good, is a combination of the class hash code and the hash
-        code of the string returned by encode().  You might make a better hash value. */
-    public int nodeHashCode() { return super.nodeHashCode() ^ encode().hashCode(); }
+    /**
+     * Implement this to hash ERCs, along with other nodes, in such a way that two
+     * "equal" ERCs will usually hash to the same value. The default value, which
+     * may not be very good, is a combination of the class hash code and the hash
+     * code of the string returned by encode().  You might make a better hash value.
+     */
+    public int nodeHashCode() {
+        return super.nodeHashCode() ^ encode().hashCode();
+    }
 
-    /** You might want to override this to return a special human-readable version of the erc value; otherwise this defaults to toString();  This should be something that resembles a LISP atom.  If a simple number or other object won't suffice, you might use something that begins with  name() + [ + ... + ] */
-    public String toStringForHumans() 
-        { return toString(); }
+    /**
+     * You might want to override this to return a special human-readable version of the erc value; otherwise this defaults to toString();  This should be something that resembles a LISP atom.  If a simple number or other object won't suffice, you might use something that begins with  name() + [ + ... + ]
+     */
+    public String toStringForHumans() {
+        return toString();
+    }
 
-    /** This defaults to simply name() + "[" + encode() + "]".   You probably shouldn't deviate from this. */
-    public String toString() 
-        { return name() + "[" + encode() + "]"; }
+    /**
+     * This defaults to simply name() + "[" + encode() + "]".   You probably shouldn't deviate from this.
+     */
+    public String toString() {
+        return name() + "[" + encode() + "]";
+    }
 
-    /** Encodes data from the ERC, using ec.util.Code.  */
+    /**
+     * Encodes data from the ERC, using ec.util.Code.
+     */
     public abstract String encode();
 
-    /** Decodes data into the ERC from dret.  Return true if you sucessfully
-        decoded, false if you didn't.  Don't increment dret.pos's value beyond
-        exactly what was needed to decode your ERC.  If you fail to decode,
-        you should make sure that the position and data in the dret are exactly
-        as they were originally. */
-    public boolean decode(final DecodeReturn dret)
-        {
+    /**
+     * Decodes data into the ERC from dret.  Return true if you sucessfully
+     * decoded, false if you didn't.  Don't increment dret.pos's value beyond
+     * exactly what was needed to decode your ERC.  If you fail to decode,
+     * you should make sure that the position and data in the dret are exactly
+     * as they were originally.
+     */
+    public boolean decode(final DecodeReturn dret) {
         return false;
-        }
+    }
 
-    /** Mutates the node's "value".  This is called by mutating operators
-        which specifically <i>mutate</i> the "value" of ERCs, as opposed to 
-        replacing them with whole new ERCs. The default form of this function
-        simply calls resetNode(state,thread), but you might want to modify
-        this to do a specialized form of mutation, applying gaussian
-        noise for example. */
+    /**
+     * Mutates the node's "value".  This is called by mutating operators
+     * which specifically <i>mutate</i> the "value" of ERCs, as opposed to
+     * replacing them with whole new ERCs. The default form of this function
+     * simply calls resetNode(state,thread), but you might want to modify
+     * this to do a specialized form of mutation, applying gaussian
+     * noise for example.
+     */
 
-    public void mutateERC(final EvolutionState state, final int thread)
-        {
-        resetNode(state,thread);
-        }
+    public void mutateERC(final EvolutionState state, final int thread) {
+        resetNode(state, thread);
+    }
 
-    /** To successfully write to a DataOutput, you must override this to write your specific ERC data out.  The
-        default implementation issues a fatal error. */
-    public void writeNode(final EvolutionState state, final DataOutput dataOutput) throws IOException
-        {
+    /**
+     * To successfully write to a DataOutput, you must override this to write your specific ERC data out.  The
+     * default implementation issues a fatal error.
+     */
+    public void writeNode(final EvolutionState state, final DataOutput dataOutput) throws IOException {
         state.output.fatal("writeNode(EvolutionState,DataInput) not implemented in " + getClass().getName());
-        }
+    }
 
-    /** To successfully read from a DataOutput, you must override this to read your specific ERC data in.  The
-        default implementation issues a fatal error. */
-    public void readNode(final EvolutionState state, final DataInput dataInput) throws IOException
-        {
+    /**
+     * To successfully read from a DataOutput, you must override this to read your specific ERC data in.  The
+     * default implementation issues a fatal error.
+     */
+    public void readNode(final EvolutionState state, final DataInput dataInput) throws IOException {
         state.output.fatal("readNode(EvolutionState,DataInput) not implemented in " + getClass().getName());
-        }
+    }
 
-    public GPNode readNode(final DecodeReturn dret) 
-        {
+    public GPNode readNode(final DecodeReturn dret) {
         int len = dret.data.length();
         int originalPos = dret.pos;
-        
+
         // get my name
         String str2 = name() + "[";
         int len2 = str2.length();
@@ -192,34 +222,42 @@ public abstract class ERC extends GPNode
             return null;
 
         // check it out
-        for(int x=0; x < len2 ; x++)
+        for (int x = 0; x < len2; x++)
             if (dret.data.charAt(dret.pos + x) != str2.charAt(x))
                 return null;
 
         // looks good!  try to load this sucker.
         dret.pos += len2;
         ERC node = (ERC) lightClone();
-        if (!node.decode(dret)) 
-            { dret.pos = originalPos; return null; }  // couldn't decode it
+        if (!node.decode(dret)) {
+            dret.pos = originalPos;
+            return null;
+        }  // couldn't decode it
 
         // the next item should be a "]"
-        
-        if (dret.pos >= len)
-            { dret.pos = originalPos; return null; }
-        if (dret.data.charAt(dret.pos) != ']') 
-            { dret.pos = originalPos; return null; }
-        
+
+        if (dret.pos >= len) {
+            dret.pos = originalPos;
+            return null;
+        }
+        if (dret.data.charAt(dret.pos) != ']') {
+            dret.pos = originalPos;
+            return null;
+        }
+
         // Check to make sure that the ERC's all there is
-        if (dret.data.length() > dret.pos+1)
-            {
-            char c = dret.data.charAt(dret.pos+1);
+        if (dret.data.length() > dret.pos + 1) {
+            char c = dret.data.charAt(dret.pos + 1);
             if (!Character.isWhitespace(c) &&
-                c != ')' && c != '(') // uh oh
-                { dret.pos = originalPos; return null; }
-            }   
+                    c != ')' && c != '(') // uh oh
+            {
+                dret.pos = originalPos;
+                return null;
+            }
+        }
 
         dret.pos++;
 
         return node;
-        }
     }
+}

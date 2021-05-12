@@ -7,9 +7,9 @@
 
 package ec.util;
 
-/* 
+/*
  * RandomChoiceChooserD.java
- * 
+ *
  * Created: Sat Jan 13 22:40:09 EST 2001
  * By: Sean Luke
  */
@@ -18,13 +18,17 @@ package ec.util;
  * Used by RandomChoice to pick objects by probability from a distribution.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public interface RandomChoiceChooserD
-    {
-    /** Returns obj's probability */
+public interface RandomChoiceChooserD {
+    /**
+     * Returns obj's probability
+     */
     public double getProbability(final Object obj);
-    /** Sets obj's probability */
+
+    /**
+     * Sets obj's probability
+     */
     public void setProbability(final Object obj, final double prob);
-    }
+}

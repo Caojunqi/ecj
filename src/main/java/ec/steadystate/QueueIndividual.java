@@ -9,18 +9,18 @@
   Used by SteadyState and by various assistant functions in the distributed evaluator
   to provide individuals to SteadyState
 */
-                
-package ec.steadystate;
-import ec.*;
 
-public class QueueIndividual implements java.io.Serializable
-    { 
+package ec.steadystate;
+
+import ec.Individual;
+
+public class QueueIndividual implements java.io.Serializable {
     public Individual ind;
-    public int subpop; 
-    public  QueueIndividual(Individual i, int s)
-        {
-        ind = i; 
-        subpop=s; 
-        }
-    };
+    public int subpop;
+
+    public QueueIndividual(Individual i, int s) {
+        ind = i;
+        subpop = s;
+    }
+};
 

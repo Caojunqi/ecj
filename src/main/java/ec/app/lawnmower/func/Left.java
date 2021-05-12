@@ -6,26 +6,32 @@
 
 
 package ec.app.lawnmower.func;
-import ec.*;
-import ec.app.lawnmower.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.lawnmower.Lawnmower;
+import ec.app.lawnmower.LawnmowerData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Left.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Left extends GPNode
-    {
-    public String toString() { return "left"; }
+public class Left extends GPNode {
+    public String toString() {
+        return "left";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -40,22 +46,22 @@ public class Left extends GPNode
       individualBase);
       }
     */
-    public int expectedChildren() { return 0; }
+    public int expectedChildren() {
+        return 0;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
-        Lawnmower p = (Lawnmower)problem;
-        LawnmowerData d = (LawnmowerData)input;
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
+        Lawnmower p = (Lawnmower) problem;
+        LawnmowerData d = (LawnmowerData) input;
 
-        switch (p.orientation)
-            {
+        switch (p.orientation) {
             case Lawnmower.O_UP:
-                p.orientation = Lawnmower.O_LEFT; 
+                p.orientation = Lawnmower.O_LEFT;
                 break;
             case Lawnmower.O_LEFT:
                 p.orientation = Lawnmower.O_DOWN;
@@ -69,14 +75,14 @@ public class Left extends GPNode
             default:  // whoa!
                 state.output.fatal("Whoa, somehow I got a bad orientation! (" + p.orientation + ")");
                 break;
-            }
+        }
         //p.moves++;
 
         // return [0,0]
         d.x = 0;
         d.y = 0;
-        }
     }
+}
 
 
 

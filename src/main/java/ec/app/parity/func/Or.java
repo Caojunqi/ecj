@@ -6,26 +6,31 @@
 
 
 package ec.app.parity.func;
-import ec.*;
-import ec.app.parity.*;
-import ec.gp.*;
-import ec.util.*;
 
-/* 
+import ec.EvolutionState;
+import ec.Problem;
+import ec.app.parity.ParityData;
+import ec.gp.ADFStack;
+import ec.gp.GPData;
+import ec.gp.GPIndividual;
+import ec.gp.GPNode;
+
+/*
  * Or.java
- * 
+ *
  * Created: Wed Nov  3 18:26:37 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class Or extends GPNode
-    {
-    public String toString() { return "or"; }
+public class Or extends GPNode {
+    public String toString() {
+        return "or";
+    }
 
     /*
       public void checkConstraints(final EvolutionState state,
@@ -41,23 +46,24 @@ public class Or extends GPNode
       }
     */
 
-    public int expectedChildren() { return 2; }
+    public int expectedChildren() {
+        return 2;
+    }
 
     public void eval(final EvolutionState state,
-        final int thread,
-        final GPData input,
-        final ADFStack stack,
-        final GPIndividual individual,
-        final Problem problem)
-        {
+                     final int thread,
+                     final GPData input,
+                     final ADFStack stack,
+                     final GPIndividual individual,
+                     final Problem problem) {
         // shortcutting OR
-        children[0].eval(state,thread,input,stack,individual,problem);
+        children[0].eval(state, thread, input, stack, individual, problem);
 
-        if (((ParityData)input).x == 0 )  // return the second item
-            children[1].eval(state,thread,input,stack,individual,problem);
+        if (((ParityData) input).x == 0)  // return the second item
+            children[1].eval(state, thread, input, stack, individual, problem);
         // else return the first item (already there)
-        }
     }
+}
 
 
 

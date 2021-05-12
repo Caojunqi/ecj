@@ -7,7 +7,7 @@
 
 /*
  * Created on Apr 14, 2005 9:08:47 PM
- * 
+ *
  * By: spaus
  */
 package ec.display;
@@ -15,10 +15,9 @@ package ec.display;
 /**
  * @author spaus
  */
-public interface EvolutionStateListener 
-    {
+public interface EvolutionStateListener {
     /**
      * @param evt
      */
     public void postEvolution(EvolutionStateEvent evt);
-    }
+}

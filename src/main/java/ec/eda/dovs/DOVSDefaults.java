@@ -6,8 +6,8 @@
 
 package ec.eda.dovs;
 
-import ec.util.*;
-import ec.*;
+import ec.DefaultsForm;
+import ec.util.Parameter;
 
 /**
  * DOVSDefaults is the basic defaults class for the dovs package.
@@ -15,13 +15,13 @@ import ec.*;
  * @author Ermo Wei and David Freelan
  */
 
-public final class DOVSDefaults implements DefaultsForm
-    {
+public final class DOVSDefaults implements DefaultsForm {
     public static final String P_DOVS = "dovs";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_DOVS);
-        }
     }
+}

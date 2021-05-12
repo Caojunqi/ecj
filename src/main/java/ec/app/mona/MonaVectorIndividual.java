@@ -4,24 +4,22 @@
   See the file "LICENSE" for more information
 */
 
-package ec.app.mona; 
+package ec.app.mona;
 
-import ec.vector.*;
-import ec.*;
+import ec.EvolutionState;
+import ec.vector.DoubleVectorIndividual;
 
-public class MonaVectorIndividual extends DoubleVectorIndividual
-    {      
-    public void reset(EvolutionState state, int thread)
-        {
+public class MonaVectorIndividual extends DoubleVectorIndividual {
+    public void reset(EvolutionState state, int thread) {
         super.reset(state, thread);
 
-        int numVertices = ((Mona)(state.evaluator.p_problem)).numVertices;
+        int numVertices = ((Mona) (state.evaluator.p_problem)).numVertices;
         int vertexSkip = numVertices * 2 + 4;  // for four colors
-                
-        for (int x = 3; x < genome.length; x+=vertexSkip)
+
+        for (int x = 3; x < genome.length; x += vertexSkip)
             // Alsing originally just set all his colors to 0 alpha.
             // Here I divide the alpha by 10 so they're initially very
             // transparent
-            genome[x] /= 10;            
-        }
+            genome[x] /= 10;
     }
+}

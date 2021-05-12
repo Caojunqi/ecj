@@ -6,20 +6,22 @@
 
 
 package ec.gp;
-import ec.*;
-import ec.util.*;
 
-/* 
+import ec.Clique;
+import ec.EvolutionState;
+import ec.util.Parameter;
+
+/*
  * GPType.java
- * 
+ *
  * Created: Fri Aug 27 20:54:23 1999
  * By: Sean Luke
  */
 
 /**
- * GPType is a Clique which represents types in 
- * Strongly-Typed Genetic Programming (STGP). 
- * (David Montana, "Strongly-Typed Genetic Programming", 
+ * GPType is a Clique which represents types in
+ * Strongly-Typed Genetic Programming (STGP).
+ * (David Montana, "Strongly-Typed Genetic Programming",
  * <i>Evolutionary Computation</i> 3(2), pp. 199-230).
  *
  * <p>In STGP, each function node has a <i>return-type</i>, and each of
@@ -37,9 +39,9 @@ import ec.util.*;
  * <p>Montana further defined generic functions (ones with polymorphic
  * data types).  Such beasts "fit" only if the trees involved can be
  * unified to make them fit, an expensive proceedure which ECJ does not
- * support.  However, ECJ's does support a compromise between simple 
- * "Basic" STGP and STGP with polymorphic types: providing both 
- * <i>atomic types</i> (basic STGP) and a more powerful notion of 
+ * support.  However, ECJ's does support a compromise between simple
+ * "Basic" STGP and STGP with polymorphic types: providing both
+ * <i>atomic types</i> (basic STGP) and a more powerful notion of
  * <i>set types</i>.
  *
  * <p>An atomic type is a basic GP type.  Atomic types "fit" only
@@ -62,13 +64,13 @@ import ec.util.*;
  *
  * <p><b>What Set and Atomic Types Can Do. </b>
  * Set and Atomic types can be used for most of the existing literature
- * (major exceptions: Tina Yu's work, and also work on multiplying 
- * matricies with GP).  For example,  
+ * (major exceptions: Tina Yu's work, and also work on multiplying
+ * matricies with GP).  For example,
  * I am fairly certain that atomic types and set types can be used to
  * implement any mechanism devisable using type inheritance along the lines
- * of (Thomas Haynes, Dale Schoenefeld, and Roger Wainwright, 
+ * of (Thomas Haynes, Dale Schoenefeld, and Roger Wainwright,
  * "Type Inheritance in Strongly Typed Genetic Programming",
- * <i>Advances in Genetic Progrmming 2</i>, pp. 359-376.  
+ * <i>Advances in Genetic Progrmming 2</i>, pp. 359-376.
  * Let's say that you wanted to define some classes a-la Haynes <i>et al</i>
  * with multiple inheritance,
  * say, a Vehicle, a Red-Thing, a Car (which is a Vehicle), a Truck (which
@@ -88,86 +90,93 @@ import ec.util.*;
  * <p>I also believe that set types and atomic types can handle most grammar-based
  * mechanisms I've seen, which in general appear reducable to STGP anyway;
  * for example, in Eric Jones and William Joines, "Genetic
- * Design of Electronic Circuits".  <i>Late-Breaking Papers at the 1999 Genetic 
+ * Design of Electronic Circuits".  <i>Late-Breaking Papers at the 1999 Genetic
  * and Evolutionary Computatiokn Conference</i>.  124-133.
-
- <p><b>Parameters</b><br>
- <table>
- <tr><td valign=top><i>base</i>.<tt>a.size</tt><br>
- <font size=-1>int &gt;= 1</font></td>
- <td valign=top>(number of atomic types)</td></tr>
-
- <tr><td valign=top><i>base</i>.<tt>s.size</tt><br>
- <font size=-1>int &gt;= 0</font></td>
- <td valign=top>(number of set types)</td></tr>
-
- <tr><td valign=top><i>base</i><tt>.a.</tt><i>n</i><tt>.name</tt><br>
- <font size=-1>String</font></td>
- <td valign=top>(name of atomic type <i>n</i>.  Must be different from other GPType names)</td></tr>
-
- <tr><td valign=top><i>base</i><tt>.s.</tt><i>n</i><tt>.name</tt><br>
- <font size=-1>String</font></td>
- <td valign=top>(name of set type <i>n</i>.  Must be different from other GPType names)</td></tr>
-
- <tr><td valign=top><i>base</i><tt>.s.</tt><i>n</i><tt>.size</tt><br>
- <font size=-1>int &gt;= 1</font></td>
- <td valign=top>(number of atomic types in the set type <i>n</i>'s set)</td></tr>
-
- <tr><td valign=top><i>base</i><tt>.s.</tt><i>n</i><tt>.member.</tt><i>m</i><br>
- <font size=-1>String</font></td>
- <td valign=top>(name of atomic type member <i>m</i> in set type <i>n</i>)</td></tr>
- </table>
-
-
+ * <p>
+ * p><b>Parameters</b><br>
+ * <table>
+ * <tr><td valign=top><i>base</i>.<tt>a.size</tt><br>
+ * <font size=-1>int &gt;= 1</font></td>
+ * <td valign=top>(number of atomic types)</td></tr>
+ *
+ * <tr><td valign=top><i>base</i>.<tt>s.size</tt><br>
+ * <font size=-1>int &gt;= 0</font></td>
+ * <td valign=top>(number of set types)</td></tr>
+ *
+ * <tr><td valign=top><i>base</i><tt>.a.</tt><i>n</i><tt>.name</tt><br>
+ * <font size=-1>String</font></td>
+ * <td valign=top>(name of atomic type <i>n</i>.  Must be different from other GPType names)</td></tr>
+ *
+ * <tr><td valign=top><i>base</i><tt>.s.</tt><i>n</i><tt>.name</tt><br>
+ * <font size=-1>String</font></td>
+ * <td valign=top>(name of set type <i>n</i>.  Must be different from other GPType names)</td></tr>
+ *
+ * <tr><td valign=top><i>base</i><tt>.s.</tt><i>n</i><tt>.size</tt><br>
+ * <font size=-1>int &gt;= 1</font></td>
+ * <td valign=top>(number of atomic types in the set type <i>n</i>'s set)</td></tr>
+ *
+ * <tr><td valign=top><i>base</i><tt>.s.</tt><i>n</i><tt>.member.</tt><i>m</i><br>
+ * <font size=-1>String</font></td>
+ * <td valign=top>(name of atomic type member <i>m</i> in set type <i>n</i>)</td></tr>
+ * </table>
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public abstract class GPType implements Clique
-    {
+public abstract class GPType implements Clique {
     public final static String P_NAME = "name";
 
-    /** The name of the type */
+    /**
+     * The name of the type
+     */
     public String name;
 
-    /** The preassigned integer value for the type */
+    /**
+     * The preassigned integer value for the type
+     */
     public int type;
 
-    /** Am I compatible with ("fit" with) <i>t</i>?  For two atomic
-        types, this is done by direct pointer equality.  For
-        two set types, this is done by determining if the intersection
-        is nonempty.  A set type is compatible with an atomic type
-        if it contains the atomic type in its set. */
+    /**
+     * Am I compatible with ("fit" with) <i>t</i>?  For two atomic
+     * types, this is done by direct pointer equality.  For
+     * two set types, this is done by determining if the intersection
+     * is nonempty.  A set type is compatible with an atomic type
+     * if it contains the atomic type in its set.
+     */
     public abstract boolean compatibleWith(final GPInitializer initializer, final GPType t);
 
-    /** Returns the type's name */
-    public String toString() { return name; }
-    
-    public void setup(final EvolutionState state, final Parameter base)
-        {
+    /**
+     * Returns the type's name
+     */
+    public String toString() {
+        return name;
+    }
+
+    public void setup(final EvolutionState state, final Parameter base) {
         // What's my name?
-        name = state.parameters.getString(base.push(P_NAME),null);
-        if (name==null)
+        name = state.parameters.getString(base.push(P_NAME), null);
+        if (name == null)
             state.output.fatal("No name was given for this GP type.",
-                base.push(P_NAME));
+                    base.push(P_NAME));
 
         // Register me
-        GPType old_type = (GPType)(((GPInitializer)state.initializer).typeRepository.put(name,this));
+        GPType old_type = (GPType) (((GPInitializer) state.initializer).typeRepository.put(name, this));
         if (old_type != null)
-            state.output.fatal("The GP type \"" + name + "\" has been defined multiple times.", base.push(P_NAME));     
-        }
+            state.output.fatal("The GP type \"" + name + "\" has been defined multiple times.", base.push(P_NAME));
+    }
 
-    /** Returns a type for a given name.
-        You must guarantee that after calling typeFor(...) one or
-        several times, you call state.output.exitIfErrors() once. */
+    /**
+     * Returns a type for a given name.
+     * You must guarantee that after calling typeFor(...) one or
+     * several times, you call state.output.exitIfErrors() once.
+     */
 
     public static GPType typeFor(final String typeName,
-        final EvolutionState state)
-        {
-        GPType myType = (GPType)(((GPInitializer)state.initializer).typeRepository.get(typeName));
-        if (myType==null)
+                                 final EvolutionState state) {
+        GPType myType = (GPType) (((GPInitializer) state.initializer).typeRepository.get(typeName));
+        if (myType == null)
             state.output.error("The GP type \"" + typeName + "\" could not be found.");
         return myType;
-        }
     }
+}

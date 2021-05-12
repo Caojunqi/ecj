@@ -7,12 +7,12 @@
 
 package ec.vector;
 
-import ec.*;
-import ec.util.*;
+import ec.DefaultsForm;
+import ec.util.Parameter;
 
-/* 
+/*
  * VectorDefaults.java
- * 
+ *
  * Created: Thu Mar 22 13:22:30 2001
  * By: Liviu Panait
  */
@@ -21,16 +21,16 @@ import ec.util.*;
  * Vector defaults is the basic defaults class for the Vector package.
  *
  * @author Liviu Panait
- * @version 1.0 
+ * @version 1.0
  */
 
-public final class VectorDefaults implements DefaultsForm
-    {
+public final class VectorDefaults implements DefaultsForm {
     public static final String P_VECTOR = "vector";
 
-    /** Returns the default base. */
-    public static final Parameter base()
-        {
+    /**
+     * Returns the default base.
+     */
+    public static final Parameter base() {
         return new Parameter(P_VECTOR);
-        }    
     }
+}

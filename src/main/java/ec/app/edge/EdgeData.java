@@ -6,25 +6,26 @@
 
 
 package ec.app.edge;
-import ec.gp.*;
 
-/* 
+import ec.gp.GPData;
+
+/*
  * EdgeData.java
- * 
+ *
  * Created: Wed Nov  3 18:32:13 1999
  * By: Sean Luke
  */
 
 /**
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class EdgeData extends GPData
-    {
+public class EdgeData extends GPData {
     // return value
     public int edge;
 
-    public void copyTo(final GPData gpd)
-        { ((EdgeData)gpd).edge = edge; }
+    public void copyTo(final GPData gpd) {
+        ((EdgeData) gpd).edge = edge;
     }
+}

@@ -6,15 +6,15 @@
 
 package ec;
 
-/* 
+/*
  * Clique.java
- * 
+ *
  * Created: Wed Oct 13 15:12:23 1999
  * By: Sean Luke
  */
 
 /**
- * Clique is a class pattern marking classes which 
+ * Clique is a class pattern marking classes which
  * create only a few instances, generally accessible through
  * some global mechanism, and every single
  * one of which gets its own distinct setup(...) call.  Cliques should
@@ -30,16 +30,15 @@ package ec;
  * GPInitializer holds the repositories for the GPFunctionSet, GPType,
  * GPNodeConstraints, and GPTreeConstraints cliques.  Likewise,
  * RuleInitializer holds the repository for the RuleConstraints clique.
- * 
+ *
  * <p>This change was made to facilitate making ECJ modular; we had to remove
  * all non-final static members.  If you make your own Clique, its repository
- * (if you have one) doesn't have to be in an Initializer, but it's a 
+ * (if you have one) doesn't have to be in an Initializer, but it's a
  * convenient location.
  *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public interface Clique extends Setup
-    {
-    }
+public interface Clique extends Setup {
+}

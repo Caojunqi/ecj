@@ -5,8 +5,8 @@
 */
 package ec.neat;
 
-import ec.util.*;
-import ec.*;
+import ec.DefaultsForm;
+import ec.util.Parameter;
 
 /**
  * NEATDefaults is the basic defaults class for the neat package.
@@ -14,12 +14,10 @@ import ec.*;
  * @author Ermo Wei and David Freelan
  */
 
-public final class NEATDefaults implements DefaultsForm
-    {
+public final class NEATDefaults implements DefaultsForm {
     public static final String P_NEAT = "neat";
 
-    public static final Parameter base()
-        {
+    public static final Parameter base() {
         return new Parameter(P_NEAT);
-        }
     }
+}

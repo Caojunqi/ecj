@@ -6,14 +6,13 @@
 
 package ec.app.klandscapes.func;
 
-import ec.*;
-import ec.app.klandscapes.*;
-import ec.gp.*;
-import ec.util.*;
-
-public class KLandscapeTreeB extends KLandscapeTree
-    {
-    public int expectedChildren() { return 2; }
-    public char value() { return 'B'; }
-
+public class KLandscapeTreeB extends KLandscapeTree {
+    public int expectedChildren() {
+        return 2;
     }
+
+    public char value() {
+        return 'B';
+    }
+
+}

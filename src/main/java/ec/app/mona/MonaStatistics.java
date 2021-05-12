@@ -4,42 +4,43 @@
   See the file "LICENSE" for more information
 */
 
-package ec.app.mona; 
+package ec.app.mona;
 
-import ec.*;
-import ec.simple.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.Statistics;
+import ec.simple.SimpleProblemForm;
 
-public class MonaStatistics extends Statistics
-    {
+public class MonaStatistics extends Statistics {
     public Individual best_of_run;
 
-    /** Logs the best individual of the generation. */
-    public void postEvaluationStatistics(final EvolutionState state)
-        {
+    /**
+     * Logs the best individual of the generation.
+     */
+    public void postEvaluationStatistics(final EvolutionState state) {
         super.postEvaluationStatistics(state);
 
         boolean newBest = false;
-        for(int y = 0; y< state.population.subpops.get(0).individuals.size(); y++)
-            if (best_of_run==null || 
-                state.population.subpops.get(0).individuals.get(y).fitness.betterThan(best_of_run.fitness))
-                {
-                best_of_run = (Individual)(state.population.subpops.get(0).individuals.get(y).clone());
+        for (int y = 0; y < state.population.subpops.get(0).individuals.size(); y++)
+            if (best_of_run == null ||
+                    state.population.subpops.get(0).individuals.get(y).fitness.betterThan(best_of_run.fitness)) {
+                best_of_run = (Individual) (state.population.subpops.get(0).individuals.get(y).clone());
                 newBest = true;
-                }
-
-        if (newBest)
-            {
-            ((SimpleProblemForm)(state.evaluator.p_problem.clone())).describe(
-                state, best_of_run, 0, 0, 0);  
             }
-        }
 
-    /** Logs the best individual of the run. */
-    public void finalStatistics(final EvolutionState state, final int result)
-        {
-        super.finalStatistics(state,result);
-
-        ((SimpleProblemForm)(state.evaluator.p_problem.clone())).describe(
-            state, best_of_run, 0, 0, 0);      
+        if (newBest) {
+            ((SimpleProblemForm) (state.evaluator.p_problem.clone())).describe(
+                    state, best_of_run, 0, 0, 0);
         }
     }
+
+    /**
+     * Logs the best individual of the run.
+     */
+    public void finalStatistics(final EvolutionState state, final int result) {
+        super.finalStatistics(state, result);
+
+        ((SimpleProblemForm) (state.evaluator.p_problem.clone())).describe(
+                state, best_of_run, 0, 0, 0);
+    }
+}

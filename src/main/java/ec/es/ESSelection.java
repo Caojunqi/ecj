@@ -6,20 +6,24 @@
 
 
 package ec.es;
-import ec.*;
-import ec.util.*;
 
-import java.util.*;
+import ec.EvolutionState;
+import ec.Individual;
+import ec.SelectionMethod;
+import ec.util.Parameter;
 
-/* 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/*
  * ESSelection.java
- * 
+ *
  * Created: Thu Sep  7 19:08:19 2000
  * By: Sean Luke
  */
 
 /**
- * ESSelection is a special SelectionMethod designed to be used with 
+ * ESSelection is a special SelectionMethod designed to be used with
  * evolutionary strategies-type breeders.
  *
  * <p>To do evolution strategies evolution, the
@@ -33,70 +37,65 @@ import java.util.*;
  * also mix ESSelection operators with other operators (like Tournament Selection).  But you ought
  * to have <b>at least one</b> ESSelection operator in the pipeline -- else it wouldn't be Evolution
  * Strategies, would it?
-
- <p><b>Default Base</b><br>
- es.select
-
+ *
+ * <p><b>Default Base</b><br>
+ * es.select
+ *
  * @author Sean Luke
- * @version 1.0 
+ * @version 1.0
  */
 
-public class ESSelection extends SelectionMethod 
-    {
+public class ESSelection extends SelectionMethod {
     public static final String P_ESSELECT = "select";
 
-    public Parameter defaultBase()
-        {
+    public Parameter defaultBase() {
         return ESDefaults.base().push(P_ESSELECT);
-        }
+    }
 
     // MuCommaLambdaBreeder expects us to set the count to nonzero to indicate our existence
     public void prepareToProduce(final EvolutionState state,
-        final int subpopulation,
-        final int thread)
-        {
+                                 final int subpopulation,
+                                 final int thread) {
         super.prepareToProduce(state, subpopulation, thread);
         if (!(state.breeder instanceof MuCommaLambdaBreeder))
             state.output.fatal("ESSelection was handed a Breeder that's not either MuCommaLambdaBreeder or MuCommaPlusLambdaBreeder.");
-        MuCommaLambdaBreeder breeder = (MuCommaLambdaBreeder)(state.breeder);
+        MuCommaLambdaBreeder breeder = (MuCommaLambdaBreeder) (state.breeder);
 
         breeder.count[thread] = 1;
-        }
+    }
 
     public int produce(final int subpopulation,
-        final EvolutionState state,
-        final int thread)
-        {
+                       final EvolutionState state,
+                       final int thread) {
         if (!(state.breeder instanceof MuCommaLambdaBreeder))
             state.output.fatal("ESSelection was handed a Breeder that's not either MuCommaLambdaBreeder or MuCommaPlusLambdaBreeder.");
-        MuCommaLambdaBreeder breeder = (MuCommaLambdaBreeder)(state.breeder);
-        
+        MuCommaLambdaBreeder breeder = (MuCommaLambdaBreeder) (state.breeder);
+
         // determine my position in the array
-        int pos = (breeder.lambda[subpopulation] % state.breedthreads == 0 ? 
-            breeder.lambda[subpopulation]/state.breedthreads :
-            breeder.lambda[subpopulation]/state.breedthreads + 1) * 
-            thread + breeder.count[thread];  // note integer division
-        
+        int pos = (breeder.lambda[subpopulation] % state.breedthreads == 0 ?
+                breeder.lambda[subpopulation] / state.breedthreads :
+                breeder.lambda[subpopulation] / state.breedthreads + 1) *
+                thread + breeder.count[thread];  // note integer division
+
         // determine the parent
         int parent = pos / (breeder.lambda[subpopulation] / breeder.mu[subpopulation]); // note outer integer division
 
         // increment our count
         //breeder.count[thread]++;
-        
+
         return parent;
-        }
+    }
 
     public int produceWithoutCloning(final int min,
-        final int max,
-        final int subpopulation,
-        final ArrayList<Individual> inds,
-        final EvolutionState state,
-        final int thread, HashMap<String, Object> misc)
-        {
-        if (min>1) // uh oh
+                                     final int max,
+                                     final int subpopulation,
+                                     final ArrayList<Individual> inds,
+                                     final EvolutionState state,
+                                     final int thread, HashMap<String, Object> misc) {
+        if (min > 1) // uh oh
             state.output.fatal("ESSelection used, but it's being asked to produce more than one individual.");
         return super.produceWithoutCloning(min, max, subpopulation, inds, state, thread, misc);
-        }
+    }
 
 
     /*
@@ -133,4 +132,4 @@ public class ESSelection extends SelectionMethod
       return 1;
       }
     */
-    }
+}
