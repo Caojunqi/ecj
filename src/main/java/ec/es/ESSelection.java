@@ -72,10 +72,14 @@ public class ESSelection extends SelectionMethod {
         MuCommaLambdaBreeder breeder = (MuCommaLambdaBreeder) (state.breeder);
 
         // determine my position in the array
-        int pos = (breeder.lambda[subpopulation] % state.breedthreads == 0 ?
-                breeder.lambda[subpopulation] / state.breedthreads :
-                breeder.lambda[subpopulation] / state.breedthreads + 1) *
-                thread + breeder.count[thread];  // note integer division
+        int individualsPerThread = breeder.lambda[subpopulation] / state.breedthreads;
+        int slop = breeder.lambda[subpopulation] - state.breedthreads * individualsPerThread;
+        int pos = 0;
+        if(thread <= slop){
+            pos = (breeder.lambda[subpopulation] / state.breedthreads + 1) * thread + breeder.count[thread];
+        }else{
+            pos = (breeder.lambda[subpopulation] / state.breedthreads + 1) * slop + (breeder.lambda[subpopulation] / state.breedthreads) * (thread - slop) + breeder.count[thread];
+        }
 
         // determine the parent
         int parent = pos / (breeder.lambda[subpopulation] / breeder.mu[subpopulation]); // note outer integer division
